@@ -1,0 +1,21 @@
+{
+  "presets": [
+    "es2015",
+    "react",
+    "stage-0"
+  ],
+  "plugins": [
+    [
+      "transform-react-remove-prop-types",
+      "transform-runtime", "transform-decorators-legacy",
+      {"mode": "wrap"}
+    ]
+  ],
+  "env": {
+    "start": {
+      "presets": [
+        "react-hmre"
+      ]
+    }
+  }
+}
