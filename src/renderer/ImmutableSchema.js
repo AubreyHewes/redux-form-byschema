@@ -99,8 +99,8 @@ export default class Renderer {
     let name = 'root' + (path.length ? '[' + path.join('][') + ']' : '') + '[' + propName + ']';
     subPath.push(propName);
 
-    if ((value === undefined) && (schema['default'] !== undefined)) {
-      value = schema['default'];
+    if ((value === undefined) && (schema.get('default') !== undefined)) {
+      value = schema.get('default');
     }
 
     if (schema.get('renderer') === 'hidden') {
@@ -211,7 +211,7 @@ export default class Renderer {
       return this.renderBooleanEnum(schema, path, value, id, name);
     }
 
-    return createElement(Field, {
+    let cfg = {
       component: this.renderSelectComponent,
       key: path,
       id: id,
@@ -231,7 +231,12 @@ export default class Renderer {
           ]
         });
       })
-    });
+    };
+
+    if (schema.get('default')) {
+      cfg.defaultValue = schema.get('default');
+    }
+    return createElement(Field, cfg);
   };
 
   renderBooleanEnum = (schema, path, value, id, name) => {
