@@ -79,7 +79,7 @@ export default class SchemaForm extends Component {
       : (config && config.inputWrapperClass ? config.inputWrapperClass : '');
 
     return createElement('div', {
-      className: 'form-group form-group-buttons',
+      className: (config.groupClass || '') + ' form-group-buttons',
       children: [createElement('div', {
         className: wrapperClassName,
         children: children
