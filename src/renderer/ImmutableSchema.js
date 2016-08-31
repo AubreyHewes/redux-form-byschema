@@ -1,6 +1,7 @@
 import Immutable from 'immutable';
 import React, { createElement } from 'react';
 import { Field } from 'redux-form';
+import Locale from '../i18n/en';
 
 /**
  * Renderer for a react-redux (v6) form via an Immutable JSON Schema
@@ -10,13 +11,17 @@ import { Field } from 'redux-form';
 export default class Renderer {
 
   constructor (options) {
-    this.options = options || Immutable.Map({
-      path: []
-    });
+    if (typeof options !== Immutable.Map) {
+      options = new Immutable.Map(options);
+    }
+    this.options = new Immutable.Map({
+      path: [],
+      locale: new Locale()
+    }).mergeDeep(options);
   }
 
   renderObject = (schema, path, data) => {
-    var chunkPromises = [];
+    let chunkPromises = [];
     data = data || {};
 
     if (!schema.get('properties')) {
@@ -24,7 +29,7 @@ export default class Renderer {
         return <fieldset key={path} />;
       }
       if (schema.get('oneOf')) {
-        return <fieldset key={path} />;
+        return this.renderOneOf(schema, path, data);
       }
       if (schema.get('$ref')) {
         return this.getRef(schema.get('$ref')).then((subSchema) => {
@@ -61,8 +66,8 @@ export default class Renderer {
 
     schema.get('properties').map((propSchema, propName) => {
       if (schema.get('required') && schema.get('required').findEntry && schema.get('required').findEntry((prop) => {
-        return prop === propName;
-      })) {
+          return prop === propName;
+        })) {
         if (propSchema.get('type') !== 'object') {
           propSchema = propSchema.set('required', true);
         }
@@ -75,6 +80,73 @@ export default class Renderer {
 
     return createElement('fieldset', container);
   };
+
+  /**
+   * @TODO klevera
+   *
+   * @param {Object} schema
+   * @param {Array} path
+   * @param {Object} data
+   *
+   * @returns {*}
+   */
+  renderOneOf (schema, path, data) {
+    const propName = path.pop();
+    // const name = 'root' + (path.length ? '[' + path.join('][') + ']' : '') + '[' + propName + ']';
+    const id = (path.length ? path.join('-') + '-' : '') + propName;
+
+    path.push(propName);
+
+    let classNames = ['schema-property', 'schema-property-oneOf'];
+    if (this.options.get('groupClass') && schema.get('type') !== 'object') {
+      classNames.push(this.options.get('groupClass'));
+    }
+
+    let container = {
+      className: classNames,
+      children: [
+        createElement('label', {
+          htmlFor: id,
+          children: [schema.get('title')]
+        })
+      ]
+    };
+
+    let selectCfg = {
+      id: id,
+      className: 'form-control schema-property-oneOf-selector',
+      children: []
+    };
+
+    selectCfg.children = schema.get('oneOf').map((subSchema, idx) => {
+      return createElement('option', {
+        key: subSchema.get('title') + idx,
+        children: [subSchema.get('title')]
+      });
+    });
+
+    const me = this;
+    selectCfg.onChange = (event) => { // react event
+      me.setState({'selected': event.target.value});
+      console.log('yo whats up', event.target.value);
+    };
+
+    container.children.push(createElement('select', selectCfg));
+
+    // render each enum as block
+
+    container.children = container.children.concat(schema.get('oneOf').map(function (subSchema) {
+      subSchema = subSchema.delete('title').set('disabled', false);
+
+      if (subSchema.get('disabled')) {
+        return null;
+      }
+
+      return me.renderChunk(path, subSchema, data);
+    }));
+
+    return createElement('div', container);
+  }
 
   /**
    * @param {Array} path
@@ -121,7 +193,7 @@ export default class Renderer {
             className: this.options.get('labelClass'),
             htmlFor: id, key: subPath.concat('label'),
             children: [(schema.get('title') ? schema.get('title') : schema.get('description')) +
-              (this.options.get('showRequired') ? (schema.get('required') ? ' *' : '') : '')]
+            (this.options.get('showRequired') ? (schema.get('required') ? ' *' : '') : '')]
           }));
         }
 
@@ -308,17 +380,28 @@ export default class Renderer {
 
     let children = [
       this.renderFieldInputComponent(type, field),
-      field.touched && field.error ? createElement('span', {className: 'error', children: [field.error]}) : null
+      // <small class="form-text text-muted">Example help text that remains unchanged.</small>
+      field.touched && field.error ? createElement('div', {
+        className: 'form-control-feedback', children: [
+          this.options.get('locale') ? this.options.get('locale').getString(field.error) : field.error
+        ]
+      }) : null
     ];
 
-    return createElement('div', {
+    let cfg = {
       className: this.options.get('inputWrapperClass'),
       key: field.id,
       children: field.type === 'checkbox' ? createElement('div', {
         className: 'checkbox',
         children: children
       }) : children
-    });
+    };
+
+    if (field.touched) {
+      cfg.className += ' ' + this.options.get(field.error ? 'groupErrorClass' : 'groupSuccessClass');
+    }
+
+    return createElement('div', cfg);
   };
 
   renderFieldInputComponent (type, field) {
@@ -330,7 +413,7 @@ export default class Renderer {
     }
     return createElement(type, {
       className: (['checkbox', 'radio'].indexOf(field.type) !== -1 ? '' : this.options.get('inputClass')) +
-        (field.error ? 'user-error' : ''),
+      (field.touched ? ' ' + this.options.get(field.error ? 'inputErrorClass' : 'inputSuccessClass') : ''),
       ... field.input
     });
   }
