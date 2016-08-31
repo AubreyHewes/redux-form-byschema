@@ -140,6 +140,64 @@ export default class Renderer {
   }
 
   /**
+   * @TODO klevera
+   *
+   * @param {Object} schema
+   * @param {Array} path
+   * @param {Object} data
+   *
+   * @returns {*}
+   */
+  renderOneOf (schema, path, data) {
+    const propName = path.pop();
+    // const name = 'root' + (path.length ? '[' + path.join('][') + ']' : '') + '[' + propName + ']';
+    const id = (path.length ? path.join('-') + '-' : '') + propName;
+
+    path.push(propName);
+
+    let classNames = ['schema-property', 'schema-property-oneOf'];
+    if (this.options.get('groupClass') && schema.get('type') !== 'object') {
+      classNames.push(this.options.get('groupClass'));
+    }
+
+    let container = {
+      className: classNames.join(' '),
+      children: []
+    };
+
+    const me = this;
+    let realPath = path.concat([]);
+
+    container.children.push(this.renderChunk(path, new Immutable.Map({
+      'type': 'string',
+      'title': schema.get('title'),
+      'name': propName,
+      'enum': schema.get('oneOf').map((subSchema) => {
+        return subSchema.get('title');
+      }),
+      'onChange': (event) => {
+        let state = {};
+        state[id + 'selected'] = event.target.value;
+        me.setState(state);
+      }
+    }), data));
+
+    // render each enum as block
+    container.children = container.children.concat(schema.get('oneOf').map(function (subSchema, idx) {
+      if (me.getState() && me.getState()[id + 'selected'] === subSchema.get('title')) {
+        return me.renderChunk(realPath.concat(), subSchema.delete('title'), data);
+      }
+      // subSchema = subSchema.delete('title').set('disabled', false);
+      // if (subSchema.get('disabled')) {
+      //   return null;
+      // }
+      return null;
+    }));
+
+    return createElement('div', container);
+  }
+
+  /**
    * @param {Array} path
    * @param {Object} schema
    * @param {*} value
