@@ -120,7 +120,8 @@ export default class Renderer {
           container.children.push(createElement('label', {
             className: this.options.get('labelClass'),
             htmlFor: id, key: subPath.concat('label'),
-            children: [schema.get('title') ? schema.get('title') : schema.get('description')]
+            children: [(schema.get('title') ? schema.get('title') : schema.get('description')) +
+              (this.options.get('showRequired') ? (schema.get('required') ? ' *' : '') : '')]
           }));
         }
 
