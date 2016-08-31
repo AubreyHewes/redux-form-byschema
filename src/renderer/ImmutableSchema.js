@@ -137,6 +137,12 @@ export default class Renderer {
     }
 
     let type = 'text';
+
+    // could not be a string (array of types is allowed). .in this case wew render a "string" input
+    if (typeof schema.get('type') !== 'string') {
+      schema = schema.set('type', 'string');
+    }
+
     switch (schema.get('type')) {
       case 'string':
         if (schema.get('format') === 'date') {
