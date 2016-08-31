@@ -190,7 +190,7 @@ export default class Renderer {
       component = this.renderDisplayComponent;
     }
 
-    return createElement(Field, {
+    let cfg = {
       key: path,
       id: id,
       component: component,
@@ -204,7 +204,26 @@ export default class Renderer {
       pattern: schema.get('pattern'),
       placeholder: schema.get('description'),
       autoComplete: schema.get('autocomplete')
-    });
+    };
+
+    /*
+     Since iOS 5, type="email" has auto-capitalization disabled automatically, so you simply need:
+
+     <input type="email">
+     For other input types, there are attributes available that do what they say:
+
+     <input type="text" autocorrect="off" autocapitalize="none">
+     If for some reason you want to support iOS prior to version 5, use this for type="email":
+
+     <input type="email" autocorrect="off" autocapitalize="none">
+
+     */
+    if (type === 'email') {
+      cfg.autoCapitalize = 'none';
+      cfg.autoCorrect = 'off';
+    }
+
+    return createElement(Field, cfg);
   };
 
   renderEnum = (schema, path, value, id, name) => {
