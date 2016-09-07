@@ -24,6 +24,13 @@ export default class SchemaForm extends Component {
   renderSchema (schema, values, config) {
     if (!this.renderer) {
       this.renderer = new Renderer(config);
+      const me = this;
+      this.renderer.setState = (state) => {
+        me.setState(state);
+      };
+      this.renderer.getState = () => {
+        return me.state;
+      };
     }
     return this.renderer.renderObject(schema, [], values);
   }

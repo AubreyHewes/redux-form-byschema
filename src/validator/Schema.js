@@ -65,6 +65,8 @@ export const validate = (values, form) => {
     // todo this doesn't work... ref is still an object
     // nibble = err.message;
   });
+
+  // console.log('valid', errors);
   return errors;
 };
 

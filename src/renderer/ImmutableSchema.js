@@ -92,7 +92,7 @@ export default class Renderer {
    */
   renderOneOf (schema, path, data) {
     const propName = path.pop();
-    const name = 'root' + (path.length ? '[' + path.join('][') + ']' : '') + '[' + propName + ']';
+    // const name = 'root' + (path.length ? '[' + path.join('][') + ']' : '') + '[' + propName + ']';
     const id = (path.length ? path.join('-') + '-' : '') + propName;
 
     path.push(propName);
@@ -108,12 +108,6 @@ export default class Renderer {
     };
 
     const me = this;
-    /*
-     selectCfg.onChange = (event) => { // react event
-     me.setState({'selected': event.target.value});
-     console.log('yo whats up', event.target.value);
-     };
-     */
     let realPath = path.concat([]);
 
     container.children.push(this.renderChunk(path, new Immutable.Map({
@@ -122,20 +116,24 @@ export default class Renderer {
       'name': propName,
       'enum': schema.get('oneOf').map((subSchema) => {
         return subSchema.get('title');
-      })
+      }),
+      'onChange': (event) => {
+        let state = {};
+        state[id + 'selected'] = event.target.value;
+        me.setState(state);
+      }
     }), data));
 
     // render each enum as block
     container.children = container.children.concat(schema.get('oneOf').map(function (subSchema, idx) {
-      subSchema = subSchema.delete('title').set('disabled', false);
-
-      if (subSchema.get('disabled')) {
-        return null;
+      if (me.getState() && me.getState()[id + 'selected'] === subSchema.get('title')) {
+        return me.renderChunk(realPath.concat(), subSchema.delete('title'), data);
       }
-
-      let subPath = realPath.concat([idx]);
-      // console.log('subSchema', subPath, subSchema.toJS());
-      return me.renderChunk(subPath, subSchema, data);
+      // subSchema = subSchema.delete('title').set('disabled', false);
+      // if (subSchema.get('disabled')) {
+      //   return null;
+      // }
+      return null;
     }));
 
     return createElement('div', container);
@@ -263,8 +261,8 @@ export default class Renderer {
 
     let cfg = {
       key: id + '-input',
-      id: id,
       component: component,
+      id: id,
       type: type,
       name: name,
       required: schema.get('required') ? 'required' : '',
@@ -273,7 +271,7 @@ export default class Renderer {
       min: schema.get('min'),
       max: schema.get('max'),
       pattern: schema.get('pattern'),
-      placeholder: schema.get('description'),
+      placeholder: schema.get('description') || schema.get('title'),
       autoComplete: schema.get('autocomplete')
     };
 
@@ -305,13 +303,14 @@ export default class Renderer {
     let cfg = {
       component: this.renderSelectComponent,
       key: id + '-input',
-      id: id,
       name: name,
+      id: id,
       required: schema.get('required') ? 'required' : '',
       multiple: schema.get('multiple'),
       pattern: schema.get('pattern'),
       placeholder: schema.get('description'),
       autoComplete: schema.get('autocomplete'),
+      onChange: schema.get('onChange'),
       children: schema.get('enum').map((value, idx) => {
         return createElement('option', {
           key: value + idx,
@@ -380,9 +379,9 @@ export default class Renderer {
     let children = [
       this.renderFieldInputComponent(type, field),
       // <small class="form-text text-muted">Example help text that remains unchanged.</small>
-      field.touched && field.error ? createElement('div', {
+      field.meta.touched && field.meta.error ? createElement('div', {
         className: 'form-control-feedback', children: [
-          this.options.get('locale') ? this.options.get('locale').getString(field.error) : field.error
+          this.options.get('locale') ? this.options.get('locale').getString(field.meta.error) : field.meta.error
         ]
       }) : null
     ];
@@ -396,8 +395,8 @@ export default class Renderer {
       }) : children
     };
 
-    if (field.touched) {
-      cfg.className += ' ' + this.options.get(field.error ? 'groupErrorClass' : 'groupSuccessClass');
+    if (field.meta.touched) {
+      cfg.className += ' ' + this.options.get(field.meta.error ? 'groupErrorClass' : 'groupSuccessClass');
     }
 
     return createElement('div', cfg);
@@ -410,9 +409,11 @@ export default class Renderer {
         children: [field.input.value]
       });
     }
+
     return createElement(type, {
       className: (['checkbox', 'radio'].indexOf(field.type) !== -1 ? '' : this.options.get('inputClass')) +
-      (field.touched ? ' ' + this.options.get(field.error ? 'inputErrorClass' : 'inputSuccessClass') : ''),
+      (field.meta.touched ? ' ' + this.options.get(field.meta.error ? 'inputErrorClass' : 'inputSuccessClass') : ''),
+      ... field,
       ... field.input
     });
   }

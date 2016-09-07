@@ -16,6 +16,13 @@ export default class SchemaForm extends BasicSchemaForm {
   renderSchema (schema, values, config) {
     if (!this.renderer) {
       this.renderer = new Renderer(new ImmutableMap(config));
+      const me = this;
+      this.renderer.setState = (state) => {
+        me.setState(state);
+      };
+      this.renderer.getState = () => {
+        return me.state;
+      };
     }
     return this.renderer.renderObject(schema, [], values);
   }
