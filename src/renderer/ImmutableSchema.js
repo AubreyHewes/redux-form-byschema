@@ -114,15 +114,16 @@ export default class Renderer {
      console.log('yo whats up', event.target.value);
      };
      */
+    let realPath = path.concat([]);
 
-    container.children.push(this.renderType(new Immutable.Map({
+    container.children.push(this.renderChunk(path, new Immutable.Map({
       'type': 'string',
       'title': schema.get('title'),
       'name': propName,
       'enum': schema.get('oneOf').map((subSchema) => {
         return subSchema.get('title');
       })
-    }), path, data, id, name));
+    }), data));
 
     // render each enum as block
     container.children = container.children.concat(schema.get('oneOf').map(function (subSchema, idx) {
@@ -132,7 +133,7 @@ export default class Renderer {
         return null;
       }
 
-      let subPath = path.concat([idx]);
+      let subPath = realPath.concat([idx]);
       // console.log('subSchema', subPath, subSchema.toJS());
       return me.renderChunk(subPath, subSchema, data);
     }));
