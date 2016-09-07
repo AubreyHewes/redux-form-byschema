@@ -323,9 +323,6 @@ export default class Renderer {
       })
     };
 
-    if (schema.get('default')) {
-      cfg.defaultValue = schema.get('default');
-    }
     return createElement(Field, cfg);
   };
 
