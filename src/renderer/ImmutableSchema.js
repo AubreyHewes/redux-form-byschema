@@ -66,8 +66,8 @@ export default class Renderer {
 
     schema.get('properties').map((propSchema, propName) => {
       if (schema.get('required') && schema.get('required').findEntry && schema.get('required').findEntry((prop) => {
-          return prop === propName;
-        })) {
+        return prop === propName;
+      })) {
         if (propSchema.get('type') !== 'object') {
           propSchema = propSchema.set('required', true);
         }
@@ -92,7 +92,7 @@ export default class Renderer {
    */
   renderOneOf (schema, path, data) {
     const propName = path.pop();
-    // const name = 'root' + (path.length ? '[' + path.join('][') + ']' : '') + '[' + propName + ']';
+    const name = 'root' + (path.length ? '[' + path.join('][') + ']' : '') + '[' + propName + ']';
     const id = (path.length ? path.join('-') + '-' : '') + propName;
 
     path.push(propName);
@@ -103,46 +103,38 @@ export default class Renderer {
     }
 
     let container = {
-      className: classNames,
-      children: [
-        createElement('label', {
-          htmlFor: id,
-          children: [schema.get('title')]
-        })
-      ]
-    };
-
-    let selectCfg = {
-      id: id,
-      className: 'form-control schema-property-oneOf-selector',
+      className: classNames.join(' '),
       children: []
     };
 
-    selectCfg.children = schema.get('oneOf').map((subSchema, idx) => {
-      return createElement('option', {
-        key: subSchema.get('title') + idx,
-        children: [subSchema.get('title')]
-      });
-    });
-
     const me = this;
-    selectCfg.onChange = (event) => { // react event
-      me.setState({'selected': event.target.value});
-      console.log('yo whats up', event.target.value);
-    };
+    /*
+     selectCfg.onChange = (event) => { // react event
+     me.setState({'selected': event.target.value});
+     console.log('yo whats up', event.target.value);
+     };
+     */
 
-    container.children.push(createElement('select', selectCfg));
+    container.children.push(this.renderType(new Immutable.Map({
+      'type': 'string',
+      'title': schema.get('title'),
+      'name': propName,
+      'enum': schema.get('oneOf').map((subSchema) => {
+        return subSchema.get('title');
+      })
+    }), path, data, id, name));
 
     // render each enum as block
-
-    container.children = container.children.concat(schema.get('oneOf').map(function (subSchema) {
+    container.children = container.children.concat(schema.get('oneOf').map(function (subSchema, idx) {
       subSchema = subSchema.delete('title').set('disabled', false);
 
       if (subSchema.get('disabled')) {
         return null;
       }
 
-      return me.renderChunk(path, subSchema, data);
+      let subPath = path.concat([idx]);
+      // console.log('subSchema', subPath, subSchema.toJS());
+      return me.renderChunk(subPath, subSchema, data);
     }));
 
     return createElement('div', container);
@@ -189,12 +181,7 @@ export default class Renderer {
       default:
 
         if (this.options.get('hasLabels') || this.options.get('hasLabels') === undefined) {
-          container.children.push(createElement('label', {
-            className: this.options.get('labelClass'),
-            htmlFor: id, key: subPath.concat('label'),
-            children: [(schema.get('title') ? schema.get('title') : schema.get('description')) +
-            (this.options.get('showRequired') ? (schema.get('required') ? ' *' : '') : '')]
-          }));
+          container.children.push(this.renderLabel(schema, subPath, id));
         }
 
         container.children.push(this.renderType(schema, subPath, value, id, name));
@@ -202,6 +189,17 @@ export default class Renderer {
     }
 
     return createElement('div', container);
+  };
+
+  renderLabel = (schema, path, id) => {
+    return createElement('label', {
+      className: this.options.get('labelClass'),
+      htmlFor: id,
+      key: id + '-label',
+      children: [
+        (schema.get('title') ? schema.get('title') : schema.get('description')) +
+        (this.options.get('showRequired') ? (schema.get('required') ? ' *' : '') : '')]
+    });
   };
 
   renderType = (schema, subPath, value, id, name) => {
@@ -263,7 +261,7 @@ export default class Renderer {
     }
 
     let cfg = {
-      key: path,
+      key: id + '-input',
       id: id,
       component: component,
       type: type,
@@ -305,7 +303,7 @@ export default class Renderer {
 
     let cfg = {
       component: this.renderSelectComponent,
-      key: path,
+      key: id + '-input',
       id: id,
       name: name,
       required: schema.get('required') ? 'required' : '',
@@ -390,7 +388,7 @@ export default class Renderer {
 
     let cfg = {
       className: this.options.get('inputWrapperClass'),
-      key: field.id,
+      key: field.id + '-wrapper',
       children: field.type === 'checkbox' ? createElement('div', {
         className: 'checkbox',
         children: children
