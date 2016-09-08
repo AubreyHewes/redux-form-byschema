@@ -154,7 +154,7 @@ export default class Renderer {
     let id = 'root-' + (path.length ? path.join('-') + '-' : '') + propName;
 
     let classNames = ['schema-property', 'schema-property-' + className, 'schema-datatype-' + schema.get('type')];
-    if (this.options.get('groupClass') && schema.get('type') !== 'object') {
+    if (this.options.get('groupClass') && schema.get('type') !== 'object' && schema.get('type') !== 'array') {
       classNames.push(this.options.get('groupClass'));
     }
 
@@ -177,6 +177,11 @@ export default class Renderer {
       case 'object':
         container.children.push(this.renderObject(schema, subPath, value));
         break;
+
+      case 'array':
+        container.children.push(this.renderArray(schema, subPath, id, name, value));
+        break;
+
       default:
 
         if (this.options.get('hasLabels') || this.options.get('hasLabels') === undefined) {
@@ -188,6 +193,24 @@ export default class Renderer {
     }
 
     return createElement('div', container);
+  };
+
+  renderArray = (schema, path, id, name, value) => {
+    // multiple select
+    if (schema.get('items').get('enum')) {
+      return this.renderChunk(path, schema.get('items').set('title', schema.get('title')), value);
+    }
+
+    // TODO other array
+    let container = {
+      children: []
+    };
+    if (schema.get('title')) {
+      container.children.push(createElement('div', {
+        className: 'legend'
+      }));
+    }
+    return createElement('fieldset', container);
   };
 
   renderLabel = (schema, path, id) => {
@@ -274,6 +297,10 @@ export default class Renderer {
       placeholder: schema.get('description') || schema.get('title'),
       autoComplete: schema.get('autocomplete')
     };
+
+    if (schema.get('renderer') === 'multiselect') {
+      cfg.multiselect = true;
+    }
 
     /*
      Since iOS 5, type="email" has auto-capitalization disabled automatically, so you simply need:
