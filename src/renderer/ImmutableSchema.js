@@ -301,7 +301,7 @@ export default class Renderer {
     };
 
     if (schema.get('renderer') === 'multiselect') {
-      cfg.multiselect = true;
+      cfg.multiselect = 'multiselect';
     }
 
     /*
