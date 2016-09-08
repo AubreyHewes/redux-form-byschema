@@ -64,19 +64,21 @@ export default class Renderer {
       }));
     }
 
-    schema.get('properties').map((propSchema, propName) => {
-      if (schema.get('required') && schema.get('required').findEntry && schema.get('required').findEntry((prop) => {
-        return prop === propName;
-      })) {
-        if (propSchema.get('type') !== 'object') {
-          propSchema = propSchema.set('required', true);
+    if (schema.get('properties')) {
+      schema.get('properties').map((propSchema, propName) => {
+        if (schema.get('required') && schema.get('required').findEntry && schema.get('required').findEntry((prop) => {
+          return prop === propName;
+        })) {
+          if (propSchema.get('type') !== 'object') {
+            propSchema = propSchema.set('required', true);
+          }
         }
-      }
 
-      path.slice(0);
-      path.push(propName);
-      container.children.push(this.renderChunk(path, propSchema/*, data.get(propName)*/));
-    });
+        path.slice(0);
+        path.push(propName);
+        container.children.push(this.renderChunk(path, propSchema/*, data.get(propName)*/));
+      });
+    }
 
     return createElement('fieldset', container);
   };
@@ -429,7 +431,7 @@ export default class Renderer {
   renderFieldInputComponent (type, field) {
     if (type === 'div') {
       return createElement(type, {
-        className: this.options.get('inputClass') + ' form-control-display',
+        className: this.options.get('inputStaticClass'),
         children: [field.input.value]
       });
     }
