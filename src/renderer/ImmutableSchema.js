@@ -200,7 +200,7 @@ export default class Renderer {
   renderArray = (schema, path, id, name, value) => {
     // multiple select
     if (schema.get('items').get('enum')) {
-      return this.renderChunk(path, schema.get('items').set('title', schema.get('title')), value);
+      return this.renderChunk(path, schema.get('items').set('title', schema.get('title')).set('multiple', true), value);
     }
 
     // TODO other array
@@ -300,10 +300,6 @@ export default class Renderer {
       autoComplete: schema.get('autocomplete')
     };
 
-    if (schema.get('renderer') === 'multiselect') {
-      cfg.multiselect = 'multiselect';
-    }
-
     /*
      Since iOS 5, type="email" has auto-capitalization disabled automatically, so you simply need:
 
@@ -335,7 +331,7 @@ export default class Renderer {
       name: name,
       id: id,
       required: schema.get('required') ? 'required' : '',
-      multiple: schema.get('multiple'),
+      multiple: schema.get('multiple') ? 'multiple' : '',
       pattern: schema.get('pattern'),
       placeholder: schema.get('description'),
       autoComplete: schema.get('autocomplete'),
