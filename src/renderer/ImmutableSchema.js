@@ -204,17 +204,7 @@ export default class Renderer {
     if (schema.get('items').get('enum')) {
       return this.renderChunk(path, schema.get('items').set('title', schema.get('title')).set('multiple', true), value);
     }
-
-    // TODO other array
-    let container = {
-      children: []
-    };
-    if (schema.get('title')) {
-      container.children.push(createElement('div', {
-        className: 'legend'
-      }));
-    }
-    return createElement('fieldset', container);
+    return this.renderChunk(path, schema.get('items').set('title', schema.get('title')), value);
   };
 
   renderLabel = (schema, path, id) => {
@@ -229,7 +219,7 @@ export default class Renderer {
   };
 
   renderType = (schema, subPath, value, id, name) => {
-    if (schema.get('enum')) {
+    if (schema.get('enum') && schema.get('renderer') !== 'display') {
       return this.renderEnum(schema, subPath, value, id, name);
     }
 
@@ -436,14 +426,18 @@ export default class Renderer {
     let className = (['checkbox', 'radio'].indexOf(field.type) !== -1 ? '' : this.options.get('inputClass')) +
       (field.meta.touched ? ' ' + this.options.get(field.meta.error ? 'inputErrorClass' : 'inputSuccessClass') : '');
 
+    const {meta, input, ...rest} = field;
     let props = {
-      ... field,
-      ... field.input
+      ... rest,
+      ... input
     };
     if (type === Select) {
-      className = '';
-      props.value = field.input.value || null;
-      props.onBlur = () => field.input.onBlur(field.input.value);
+      className = (meta.touched ? ' ' +
+        this.options.get(meta.error ? 'inputErrorClass' : 'inputSuccessClass') : '');
+      props.value = input.value || null;
+      props.onBlur = () => input.onBlur(field.input.value);
+      props.clearable = rest.required !== 'required';
+      props.required = rest.required === 'required';
     }
 
     return createElement(type, {
