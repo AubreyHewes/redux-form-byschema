@@ -3,6 +3,8 @@ import React, { createElement } from 'react';
 import { Field } from 'redux-form';
 import Locale from '../i18n/en';
 
+import Select from 'react-select';
+
 /**
  * Renderer for a react-redux (v6) form via an Immutable JSON Schema
  *
@@ -325,6 +327,14 @@ export default class Renderer {
       return this.renderBooleanEnum(schema, path, value, id, name);
     }
 
+    let options = schema.get('enum').map((value, idx) => {
+      return {
+        value: value,
+        label: schema.get('enum_titles') && schema.get('enum_titles').get(idx)
+          ? schema.get('enum_titles').get(idx) : value
+      };
+    }).toJS();
+
     let cfg = {
       component: this.renderSelectComponent,
       key: id + '-input',
@@ -332,22 +342,13 @@ export default class Renderer {
       id: id,
       required: schema.get('required') ? 'required' : '',
       multiple: schema.get('multiple') ? 'multiple' : '',
+      multi: !!schema.get('multiple'),
       pattern: schema.get('pattern'),
       placeholder: schema.get('description'),
       autoComplete: schema.get('autocomplete'),
       onChange: schema.get('onChange'),
-      children: schema.get('enum').map((value, idx) => {
-        return createElement('option', {
-          key: value + idx,
-          value: value,
-          children: [
-            schema.get('enum_titles') &&
-            schema.get('enum_titles').get(idx) ? schema.get('enum_titles').get(idx) : value
-          ]
-        });
-      })
+      options: options
     };
-
     return createElement(Field, cfg);
   };
 
@@ -382,7 +383,7 @@ export default class Renderer {
   };
 
   renderSelectComponent = (field) => {
-    return this.renderFieldComponent('select', field);
+    return this.renderFieldComponent(Select, field);
   };
 
   renderTextareaComponent = (field) => {
@@ -432,11 +433,22 @@ export default class Renderer {
       });
     }
 
-    return createElement(type, {
-      className: (['checkbox', 'radio'].indexOf(field.type) !== -1 ? '' : this.options.get('inputClass')) +
-      (field.meta.touched ? ' ' + this.options.get(field.meta.error ? 'inputErrorClass' : 'inputSuccessClass') : ''),
+    let className = (['checkbox', 'radio'].indexOf(field.type) !== -1 ? '' : this.options.get('inputClass')) +
+      (field.meta.touched ? ' ' + this.options.get(field.meta.error ? 'inputErrorClass' : 'inputSuccessClass') : '');
+
+    let props = {
       ... field,
       ... field.input
+    };
+    if (type === Select) {
+      className = '';
+      props.value = field.input.value || null;
+      props.onBlur = () => field.input.onBlur(field.input.value);
+    }
+
+    return createElement(type, {
+      className: className,
+      ...props
     });
   }
 
