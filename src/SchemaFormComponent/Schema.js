@@ -16,6 +16,7 @@ export default class SchemaForm extends Component {
     ... propTypes,
     children: PropTypes.any,
     config: PropTypes.object,
+    path: PropTypes.array,
     schema: PropTypes.object
   };
 
@@ -37,14 +38,14 @@ export default class SchemaForm extends Component {
         return me.state;
       };
     }
-    return this.renderer.renderObject(schema, [], values);
+    return this.renderer.renderObject(schema, this.props.path || [], values);
   }
 
   render () {
     const {
       /*eslint no-unused-vars:0*/
       // own
-      schema, config,
+      schema, config, path,
       // redux-form
       anyTouched, asyncValidate, asyncValidating, destroy, dirty, dispatch, error, focus, handleSubmit, initialize,
       invalid, pristine, reset, submitting, submitFailed, touch, untouch, valid, initialValues, shouldAsyncValidate,

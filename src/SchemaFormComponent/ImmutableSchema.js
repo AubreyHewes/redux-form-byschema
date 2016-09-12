@@ -25,9 +25,9 @@ export default class SchemaForm extends BasicSchemaForm {
       };
     }
     if (schema.get('type') === 'array') {
-      return this.renderer.renderArray(schema, [], values);
+      return this.renderer.renderArray(schema, this.props.path || [], values);
     }
-    return this.renderer.renderObject(schema, [], values);
+    return this.renderer.renderObject(schema, this.props.path || [], values);
   }
 
 }
