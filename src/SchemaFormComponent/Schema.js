@@ -21,6 +21,11 @@ export default class SchemaForm extends Component {
 
   renderer = null;
 
+  // shouldComponentUpdate (nextProps, nextState) {
+  //   console.log(nextProps, nextState);
+  //   return nextProps.dirty;
+  // }
+
   renderSchema (schema, values, config) {
     if (!this.renderer) {
       this.renderer = new Renderer(config);

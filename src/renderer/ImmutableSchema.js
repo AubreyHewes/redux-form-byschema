@@ -3,7 +3,8 @@ import React, { createElement } from 'react';
 import { Field, FieldArray } from 'redux-form';
 import Locale from '../i18n/en';
 
-import VirtualizedSelect from 'react-virtualized-select';
+// const Select = 'select';
+import Select from 'react-virtualized-select';
 
 /**
  * Renderer for a react-redux (v6) form via an Immutable JSON Schema
@@ -241,7 +242,8 @@ export default class Renderer {
       key: id + '-label',
       children: [
         (schema.get('title') ? schema.get('title') : schema.get('description')) +
-        (this.options.get('showRequired') ? (schema.get('required') ? ' *' : '') : '')]
+        (this.options.get('showRequired')
+          ? (schema.get('required') && schema.get('renderer') !== 'display' ? ' *' : '') : '')]
     });
   };
 
@@ -400,7 +402,7 @@ export default class Renderer {
   };
 
   renderSelectComponent = (field) => {
-    return this.renderFieldComponent(VirtualizedSelect, field);
+    return this.renderFieldComponent(Select, field);
   };
 
   renderTextareaComponent = (field) => {
@@ -458,7 +460,7 @@ export default class Renderer {
       ... rest,
       ... input
     };
-    if (type === VirtualizedSelect) {
+    if (type === Select) {
       className = (meta.touched ? ' ' +
         this.options.get(meta.error ? 'inputErrorClass' : 'inputSuccessClass') : '');
       props.value = input.value || null;
