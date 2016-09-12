@@ -1,6 +1,6 @@
 import Immutable from 'immutable';
 import React, { createElement } from 'react';
-import { Field } from 'redux-form';
+import { Field, FieldArray } from 'redux-form';
 import Locale from '../i18n/en';
 
 import Select from 'react-select';
@@ -144,6 +144,17 @@ export default class Renderer {
   }
 
   /**
+   *
+   * @param path
+   * @returns {string}
+   */
+  getNameFromPath (path) {
+    return 'root' + (path.length ? path.map((nibble) => {
+      return '[' + nibble + ']';
+    }).join('') : '');
+  }
+
+  /**
    * @param {Array} path
    * @param {Object} schema
    * @param {*} value
@@ -163,7 +174,8 @@ export default class Renderer {
     }
 
     let subPath = path.slice(0);
-    let name = 'root' + (path.length ? '[' + path.join('][') + ']' : '') + '[' + propName + ']';
+
+    let name = this.getNameFromPath(path) + '[' + propName + ']';
     subPath.push(propName);
 
     if ((value === undefined) && (schema.get('default') !== undefined)) {
@@ -183,7 +195,7 @@ export default class Renderer {
         break;
 
       case 'array':
-        container.children.push(this.renderArray(schema, subPath, id, name, value));
+        container.children.push(this.renderArray(schema, subPath, value));
         break;
 
       default:
@@ -199,12 +211,27 @@ export default class Renderer {
     return createElement('div', container);
   };
 
-  renderArray = (schema, path, id, name, value) => {
+  renderArray = (schema, path, value) => {
     // multiple select
     if (schema.get('items').get('enum')) {
       return this.renderChunk(path, schema.get('items').set('title', schema.get('title')).set('multiple', true), value);
     }
-    return this.renderChunk(path, schema.get('items').set('title', schema.get('title')), value);
+
+    // return <FieldArray name={this.getNameFromPath(path)} component={renderMembers} />;
+
+    return createElement(FieldArray, {
+      name: this.getNameFromPath(path),
+      component: ({ fields, meta, name }) => {
+        let path = name.replace(/(root)?(\[(.*)\])?/, '$3').split('][');
+        return createElement('div', {
+          children: fields.map((field, idx) => {
+            let subPath = path;
+            subPath.push(idx);
+            return this.renderObject(schema.get('items').set('title', schema.get('title') + ' #' + (idx + 1)), subPath);
+          })
+        });
+      }
+    });
   };
 
   renderLabel = (schema, path, id) => {
