@@ -147,13 +147,25 @@ export default class Renderer {
   /**
    *
    * @param path
+   *
    * @returns {string}
    */
-  getNameFromPath (path) {
-    return 'root' + (path.length ? path.map((nibble) => {
-      return '[' + nibble + ']';
-    }).join('') : '');
-  }
+  getNameFromPath = (path) => {
+    return 'root.' + path.join('.');
+    // return 'root' + (path.length ? path.map((nibble) => {
+    //   return '[' + nibble + ']';
+    // }).join('') : '');
+  };
+
+  /**
+   *
+   * @param name
+   *
+   * @returns {string}
+   */
+  getPathFromName = (name) => {
+    return name.replace(/^root\./, '').split('.');
+  };
 
   /**
    * @param {Array} path
@@ -176,7 +188,7 @@ export default class Renderer {
 
     let subPath = path.slice(0);
 
-    let name = this.getNameFromPath(path) + '[' + propName + ']';
+    let name = this.getNameFromPath(path) + '.' + propName;
     subPath.push(propName);
 
     if ((value === undefined) && (schema.get('default') !== undefined)) {
@@ -218,12 +230,10 @@ export default class Renderer {
       return this.renderChunk(path, schema.get('items').set('title', schema.get('title')).set('multiple', true), value);
     }
 
-    // return <FieldArray name={this.getNameFromPath(path)} component={renderMembers} />;
-
     return createElement(FieldArray, {
       name: this.getNameFromPath(path),
       component: ({ fields, meta, name }) => {
-        let path = name.replace(/(root)?(\[(.*)\])?/, '$3').split('][');
+        let path = this.getPathFromName(name);
         return createElement('div', {
           children: fields.map((field, idx) => {
             let subPath = path;
