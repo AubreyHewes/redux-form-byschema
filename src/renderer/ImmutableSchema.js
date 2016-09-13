@@ -96,11 +96,8 @@ export default class Renderer {
    * @returns {*}
    */
   renderOneOf (schema, path, data) {
-    const propName = path.pop();
-    // const name = 'root' + (path.length ? '[' + path.join('][') + ']' : '') + '[' + propName + ']';
+    const propName = 'renderOneOf';
     const id = (path.length ? path.join('-') + '-' : '') + propName;
-
-    path.push(propName);
 
     let classNames = ['schema-property', 'schema-property-oneOf'];
     if (this.options.get('groupClass') && schema.get('type') !== 'object') {
@@ -113,18 +110,18 @@ export default class Renderer {
     };
 
     const me = this;
-    let realPath = path.concat([]);
+    let realPath = path;
 
-    container.children.push(this.renderChunk(path, new Immutable.Map({
+    container.children.push(this.renderChunk(path.concat([propName]), new Immutable.Map({
       'type': 'string',
       'title': schema.get('title'),
       'name': propName,
       'enum': schema.get('oneOf').map((subSchema) => {
         return subSchema.get('title');
       }),
-      'onChange': (event) => {
+      'onChange': (newValue) => {
         let state = {};
-        state[id + 'selected'] = event.target.value;
+        state[id + 'selected'] = newValue ? newValue.value : null;
         me.setState(state);
       }
     }), data));
@@ -132,7 +129,7 @@ export default class Renderer {
     // render each enum as block
     container.children = container.children.concat(schema.get('oneOf').map(function (subSchema, idx) {
       if (me.getState() && me.getState()[id + 'selected'] === subSchema.get('title')) {
-        return me.renderChunk(realPath.concat(), subSchema.delete('title'), data);
+        return me.renderChunk(realPath, subSchema/* .delete('title') */, data);
       }
       // subSchema = subSchema.delete('title').set('disabled', false);
       // if (subSchema.get('disabled')) {
@@ -168,28 +165,40 @@ export default class Renderer {
   };
 
   /**
+   *
+   * @param name
+   *
+   * @returns {string}
+   */
+  getIdFromPath = (path) => {
+    return 'root-' + path.join('-');
+  };
+
+  /**
    * @param {Array} path
    * @param {Object} schema
    * @param {*} value
    */
   renderChunk = (path, schema, value) => {
     let propName = path.pop();
-    let className = propName;
-    if (!isNaN(parseInt(propName, 10))) {
-      // singular class name from assumed multiple
-      className = path[path.length - 1].slice(0, -1);
-    }
-    let id = 'root-' + (path.length ? path.join('-') + '-' : '') + propName;
+    // let className = propName;
+    // if (!isNaN(parseInt(propName, 10))) {
+    //   // singular class name from assumed multiple
+    //   className = path[path.length - 1].slice(0, -1);
+    // }
 
-    let classNames = ['schema-property', 'schema-property-' + className, 'schema-datatype-' + schema.get('type')];
+    let classNames = ['schema-property', 'schema-property-' + propName, 'schema-datatype-' + schema.get('type')];
     if (this.options.get('groupClass') && schema.get('type') !== 'object' && schema.get('type') !== 'array') {
       classNames.push(this.options.get('groupClass'));
     }
 
     let subPath = path.slice(0);
-
-    let name = this.getNameFromPath(path) + '.' + propName;
-    subPath.push(propName);
+    // console.log(subPath);
+    if (propName) {
+      subPath.push(propName);
+    }
+    let id = this.getIdFromPath(subPath);
+    let name = this.getNameFromPath(subPath);
 
     if ((value === undefined) && (schema.get('default') !== undefined)) {
       value = schema.get('default');
@@ -234,7 +243,9 @@ export default class Renderer {
       name: this.getNameFromPath(path),
       component: ({ fields, meta, name }) => {
         let path = this.getPathFromName(name);
+        // console.log(fields);
         return createElement('div', {
+          className: 'schema-property schema-datatype-array',
           children: fields.map((field, idx) => {
             let subPath = path;
             subPath.push(idx);
@@ -477,7 +488,18 @@ export default class Renderer {
       props.onBlur = () => input.onBlur(field.input.value);
       props.clearable = rest.required !== 'required';
       props.required = rest.required === 'required';
+      if (rest.onChange) {
+        props.onChange = (value) => {
+          rest.onChange(value); // react-select
+          input.onChange(value ? value.value : null); // redux-form Field
+        };
+      }
+      if (this.options.get('locale').getString('select')) {
+        props = {...props, ...this.options.get('locale').getString('select')};
+      }
     }
+    // trace(props);
+    // trace(props);
 
     return createElement(type, {
       className: className,
