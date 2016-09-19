@@ -2,7 +2,7 @@
 import { Component, createElement, PropTypes } from 'react';
 import BasicSchemaForm from './Schema';
 import Renderer from '../renderer/ImmutableSchema';
-import { Map as ImmutableMap } from 'immutable';
+import { fromJS as ImmutableFromJS } from 'immutable';
 
 /**
  * A SchemaForm React Component; returns a form using the configured props.schema
@@ -15,7 +15,7 @@ export default class SchemaForm extends BasicSchemaForm {
 
   renderSchema (schema, values, config) {
     if (!this.renderer) {
-      this.renderer = new Renderer(new ImmutableMap(config));
+      this.renderer = new Renderer(ImmutableFromJS(config));
       const me = this;
       this.renderer.setState = (state) => {
         me.setState(state);

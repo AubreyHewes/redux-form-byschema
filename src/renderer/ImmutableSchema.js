@@ -14,8 +14,8 @@ import Select from 'react-virtualized-select';
 export default class Renderer {
 
   constructor (options) {
-    if (typeof options !== Immutable.Map) {
-      options = new Immutable.Map(options);
+    if (!Immutable.Map.isMap(options)) {
+      throw new Error('Options should be an immutable map!');
     }
     this.options = new Immutable.Map({
       path: [],
@@ -208,7 +208,7 @@ export default class Renderer {
       value = schema.get('default');
     }
 
-    if (schema.get('renderer') === 'hidden') {
+    if (schema.get('inputRenderer') === 'hidden') {
       return this.renderInput('hidden', schema, subPath, value, id, name);
     }
 
@@ -268,12 +268,12 @@ export default class Renderer {
       children: [
         (schema.get('title') ? schema.get('title') : schema.get('description')) +
         (this.options.get('showRequired')
-          ? (schema.get('required') && schema.get('renderer') !== 'display' ? ' *' : '') : '')]
+          ? (schema.get('required') && schema.get('inputRenderer') !== 'display' ? ' *' : '') : '')]
     });
   };
 
   renderType = (schema, subPath, value, id, name) => {
-    if (schema.get('enum') && schema.get('renderer') !== 'display') {
+    if (schema.get('enum') && schema.get('inputRenderer') !== 'display') {
       return this.renderEnum(schema, subPath, value, id, name);
     }
 
@@ -295,10 +295,10 @@ export default class Renderer {
         if (schema.get('format') === 'email') {
           type = 'email';
         }
-        if (schema.get('renderer') === 'textarea') {
+        if (schema.get('inputRenderer') === 'textarea') {
           type = 'textarea';
         }
-        if (schema.get('renderer') === 'password') {
+        if (schema.get('inputRenderer') === 'password') {
           type = 'password';
         }
         break;
@@ -312,7 +312,7 @@ export default class Renderer {
       default:
         throw new Error('Schema item "' + subPath.join('.') + '" is not valid');
     }
-    if (schema.get('renderer') === 'display') {
+    if (schema.get('inputRenderer') === 'display') {
       type = 'display';
     }
     return this.renderInput(type, schema, subPath, value, id, name);
@@ -346,6 +346,9 @@ export default class Renderer {
       placeholder: schema.get('description') || schema.get('title'),
       autoComplete: schema.get('autocomplete')
     };
+    if (type !== 'hidden') {
+      cfg.schema = schema;
+    }
 
     /*
      Since iOS 5, type="email" has auto-capitalization disabled automatically, so you simply need:
@@ -368,7 +371,7 @@ export default class Renderer {
   };
 
   renderEnum = (schema, path, value, id, name) => {
-    if (schema.get('renderer') === 'radiogroup') {
+    if (schema.get('inputRenderer') === 'radiogroup') {
       return this.renderBooleanEnum(schema, path, value, id, name);
     }
 
@@ -387,6 +390,7 @@ export default class Renderer {
       key: id + '-input',
       name: name,
       id: id,
+      schema: schema,
       required: schema.get('required') ? 'required' : '',
       multiple: schema.get('multiple') ? 'multiple' : '',
       multi: !!schema.get('multiple'),
@@ -485,13 +489,14 @@ export default class Renderer {
     let className = (['checkbox', 'radio'].indexOf(field.type) !== -1 ? '' : this.options.get('inputClass')) +
       (field.meta.touched ? ' ' + this.options.get(field.meta.error ? 'inputErrorClass' : 'inputSuccessClass') : '');
 
-    const {meta, input, ...rest} = field;
+    const {meta, schema, input, ...rest} = field;
     let props = {
       ... rest,
-      ... input
+      ... input,
+      className
     };
     if (type === Select) {
-      className = (meta.touched ? ' ' +
+      props.className = (meta.touched ? ' ' +
         this.options.get(meta.error ? 'inputErrorClass' : 'inputSuccessClass') : '');
       props.value = input.value || null;
       props.onBlur = () => input.onBlur(field.input.value);
@@ -510,8 +515,12 @@ export default class Renderer {
     // trace(props);
     // trace(props);
 
+    if (schema.get('inputRenderer') && this.options.get('inputRenderers') &&
+        this.options.get('inputRenderers').get(schema.get('inputRenderer'))) {
+      return this.options.get('inputRenderers').get(schema.get('inputRenderer'))(field);
+    }
+
     return createElement(type, {
-      className: className,
       ...props
     });
   }
