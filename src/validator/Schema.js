@@ -10,8 +10,9 @@ let validator = {};
  * @returns {{}}
  */
 export const validate = (values, form) => {
-  values = values['root'] || {};
+  values = JSON.parse(JSON.stringify(values['root'] || {}), (k, v) => (k === 'renderOneOf') ? undefined : v);
 
+  // console.log('validate', values);
   const errors = {};
 
   if (!validator[form.schema.hashCode()]) {
@@ -29,6 +30,9 @@ export const validate = (values, form) => {
   if (valid) {
     return errors;
   }
+
+  // console.log(valid, validator[form.schema.hashCode()].errors);
+
   const rootKeywords = ['required', 'dependencies', 'additionalProperties'];
 
   errors.root = {};

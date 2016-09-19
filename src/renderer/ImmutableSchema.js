@@ -72,7 +72,7 @@ export default class Renderer {
         if (schema.get('required') && schema.get('required').findEntry && schema.get('required').findEntry((prop) => {
           return prop === propName;
         })) {
-          if (propSchema.get('type') !== 'object') {
+          if (propSchema.get('type') !== 'object' || propSchema.get('oneOf')) {
             propSchema = propSchema.set('required', true);
           }
         }
@@ -110,12 +110,14 @@ export default class Renderer {
     };
 
     const me = this;
-    let realPath = path;
+    const realPath = path;
 
-    container.children.push(this.renderChunk(path.concat([propName]), new Immutable.Map({
+    // console.log(schema.toJS());
+    container.children.push(this.renderChunk(realPath.concat([propName]), new Immutable.Map({
       'type': 'string',
       'title': schema.get('title'),
       'name': propName,
+      'required': schema.get('required'),
       'enum': schema.get('oneOf').map((subSchema) => {
         return subSchema.get('title');
       }),
@@ -123,13 +125,15 @@ export default class Renderer {
         let state = {};
         state[id + 'selected'] = newValue ? newValue.value : null;
         me.setState(state);
+        me.removeField(me.getNameFromPath(realPath));
+        me.changeField(me.getNameFromPath(realPath.concat(['value'])), newValue ? newValue.value : null);
       }
     }), data));
 
     // render each enum as block
     container.children = container.children.concat(schema.get('oneOf').map(function (subSchema, idx) {
       if (me.getState() && me.getState()[id + 'selected'] === subSchema.get('title')) {
-        return me.renderChunk(realPath, subSchema/* .delete('title') */, data);
+        return me.renderChunk(realPath.concat([]), subSchema/* .delete('title') */, data);
       }
       // subSchema = subSchema.delete('title').set('disabled', false);
       // if (subSchema.get('disabled')) {
@@ -166,7 +170,7 @@ export default class Renderer {
 
   /**
    *
-   * @param name
+   * @param path
    *
    * @returns {string}
    */
@@ -338,6 +342,7 @@ export default class Renderer {
       min: schema.get('min'),
       max: schema.get('max'),
       pattern: schema.get('pattern'),
+      // defaultValue: schema.get('default'),
       placeholder: schema.get('description') || schema.get('title'),
       autoComplete: schema.get('autocomplete')
     };
@@ -367,11 +372,13 @@ export default class Renderer {
       return this.renderBooleanEnum(schema, path, value, id, name);
     }
 
+    let enumTitles = schema.get('enum_titles') ||
+      (schema.get('options') ? schema.get('options').get('enum_titles') : null);
+
     let options = schema.get('enum').map((value, idx) => {
       return {
         value: value,
-        label: schema.get('enum_titles') && schema.get('enum_titles').get(idx)
-          ? schema.get('enum_titles').get(idx) : value
+        label: enumTitles && enumTitles.get(idx) ? enumTitles.get(idx) : value
       };
     }).toJS();
 
@@ -393,6 +400,9 @@ export default class Renderer {
   };
 
   renderBooleanEnum = (schema, path, value, id, name) => {
+    let enumTitles = schema.get('enum_titles') ||
+      (schema.get('options') ? schema.get('options').get('enum_titles') : null);
+
     return createElement('div', {
       className: 'radiogroup ' + this.options.get('inputWrapperClass'),
       children: schema.get('enum').map((itemValue, idx) => {
@@ -410,8 +420,7 @@ export default class Renderer {
               autoComplete: schema.get('autocomplete'),
               value: itemValue
             }),
-            schema.get('enum_titles') &&
-            schema.get('enum_titles').get(idx) ? schema.get('enum_titles').get(idx) : itemValue
+            enumTitles && enumTitles.get(idx) ? enumTitles.get(idx) : itemValue
           ]
         });
       })
