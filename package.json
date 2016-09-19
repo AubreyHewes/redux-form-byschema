@@ -44,6 +44,7 @@
     "invariant": "^2.2.1",
     "react-addons-pure-render-mixin": "^15.2.0",
     "react-addons-shallow-compare": "^15.2.0",
+    "react-google-recaptcha": "^0.5.4",
     "react-virtualized-select": "^1.4.0",
     "redux-form": "6.0.2",
     "underscore": "1.8.3"
