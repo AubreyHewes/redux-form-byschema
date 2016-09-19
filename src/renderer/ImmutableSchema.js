@@ -3,9 +3,6 @@ import React, { createElement } from 'react';
 import { Field, FieldArray } from 'redux-form';
 import Locale from '../i18n/en';
 
-// const Select = 'select';
-import Select from 'react-virtualized-select';
-
 /**
  * Renderer for a react-redux (v6) form via an Immutable JSON Schema
  *
@@ -123,15 +120,18 @@ export default class Renderer {
       }),
       'onChange': (newValue) => {
         let state = {};
-        state[id + 'selected'] = newValue ? newValue.value : null;
+        state[id + 'selected'] = newValue;
         me.setState(state);
         me.removeField(me.getNameFromPath(realPath));
-        me.changeField(me.getNameFromPath(realPath.concat(['value'])), newValue ? newValue.value : null);
+        me.changeField(me.getNameFromPath(realPath.concat(['value'])), newValue);
       }
     }), data));
 
     // render each enum as block
     container.children = container.children.concat(schema.get('oneOf').map(function (subSchema, idx) {
+      // if (me.getState()) {
+      //   console.log(me.getState()[id + 'selected']);
+      // }
       if (me.getState() && me.getState()[id + 'selected'] === subSchema.get('title')) {
         return me.renderChunk(realPath.concat([]), subSchema/* .delete('title') */, data);
       }
@@ -378,12 +378,21 @@ export default class Renderer {
     let enumTitles = schema.get('enum_titles') ||
       (schema.get('options') ? schema.get('options').get('enum_titles') : null);
 
+    // let options = schema.get('enum').map((value, idx) => {
+    //   return {
+    //     value: value,
+    //     label: enumTitles && enumTitles.get(idx) ? enumTitles.get(idx) : value
+    //   };
+    // }).toJS();
+
     let options = schema.get('enum').map((value, idx) => {
-      return {
+      return createElement('option', {
         value: value,
-        label: enumTitles && enumTitles.get(idx) ? enumTitles.get(idx) : value
-      };
-    }).toJS();
+        children: [
+          enumTitles && enumTitles.get(idx) ? enumTitles.get(idx) : value
+        ]
+      });
+    });
 
     let cfg = {
       component: this.renderSelectComponent,
@@ -393,12 +402,13 @@ export default class Renderer {
       schema: schema,
       required: schema.get('required') ? 'required' : '',
       multiple: schema.get('multiple') ? 'multiple' : '',
-      multi: !!schema.get('multiple'),
+      // multi: !!schema.get('multiple'),
       pattern: schema.get('pattern'),
       placeholder: schema.get('description'),
       autoComplete: schema.get('autocomplete'),
       onChange: schema.get('onChange'),
-      options: options
+      type: 'select',
+      children: options
     };
     return createElement(Field, cfg);
   };
@@ -436,7 +446,7 @@ export default class Renderer {
   };
 
   renderSelectComponent = (field) => {
-    return this.renderFieldComponent(Select, field);
+    return this.renderFieldComponent('select', field);
   };
 
   renderTextareaComponent = (field) => {
@@ -489,35 +499,29 @@ export default class Renderer {
     let className = (['checkbox', 'radio'].indexOf(field.type) !== -1 ? '' : this.options.get('inputClass')) +
       (field.meta.touched ? ' ' + this.options.get(field.meta.error ? 'inputErrorClass' : 'inputSuccessClass') : '');
 
-    const {meta, schema, input, ...rest} = field;
+    const { meta, schema, input, ...rest } = field; // eslint-disable-line no-unused-vars
     let props = {
       ... rest,
       ... input,
       className
     };
-    if (type === Select) {
-      props.className = (meta.touched ? ' ' +
-        this.options.get(meta.error ? 'inputErrorClass' : 'inputSuccessClass') : '');
-      props.value = input.value || null;
-      props.onBlur = () => input.onBlur(field.input.value);
-      props.clearable = rest.required !== 'required';
-      props.required = rest.required === 'required';
-      if (rest.onChange) {
-        props.onChange = (value) => {
-          rest.onChange(value); // react-select
-          input.onChange(value ? value.value : null); // redux-form Field
-        };
-      }
-      if (this.options.get('locale').getString('select')) {
-        props = {...props, ...this.options.get('locale').getString('select')};
-      }
+    if (rest.onChange) {
+      props.onChange = (e) => {
+        rest.onChange(e.target.value);
+        input.onChange(e.target.value);
+      };
     }
-    // trace(props);
-    // trace(props);
 
-    if (schema.get('inputRenderer') && this.options.get('inputRenderers') &&
-        this.options.get('inputRenderers').get(schema.get('inputRenderer'))) {
-      return this.options.get('inputRenderers').get(schema.get('inputRenderer'))(field);
+    if (this.options.get('inputRenderers')) {
+      // override inputRenderer by type
+      if (field.type && this.options.get('inputRenderers').get(field.type)) {
+        return this.options.get('inputRenderers').get(field.type)(field, this.options);
+      }
+
+      // custom inputRenderer
+      if (schema.get('inputRenderer') && this.options.get('inputRenderers').get(schema.get('inputRenderer'))) {
+        return this.options.get('inputRenderers').get(schema.get('inputRenderer'))(field, this.options);
+      }
     }
 
     return createElement(type, {
