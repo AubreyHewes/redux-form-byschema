@@ -23,6 +23,10 @@ export default class SchemaForm extends BasicSchemaForm {
       this.renderer.getState = () => {
         return me.state;
       };
+      this.renderer.changeField = (name, value) => {
+        // console.log('changeField', name, value);
+        return me.props.dispatch(me.props.change(name, value));
+      };
     }
     if (schema.get('type') === 'array') {
       return this.renderer.renderArray(schema, this.props.path || [], values);
