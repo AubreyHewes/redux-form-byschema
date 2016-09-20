@@ -109,12 +109,14 @@ export default class Renderer {
     const me = this;
     const realPath = path;
 
-    const field = createElement(Field, {
-      component: 'input',
-      type: 'text',
-      name: realPath.concat([propName]).join('.')
-    });
-    console.log(field);
+    // const field = createElement(Field, {
+    //   component: 'input',
+    //   type: 'text',
+    //   name: realPath.concat([propName]).join('.')
+    // });
+    // if (__DEBUG__) {
+    //   console.log(field);
+    // }
 
     // console.log(schema.toJS());
     container.children.push(this.renderChunk(realPath.concat([propName]), new Immutable.Map({
@@ -129,7 +131,7 @@ export default class Renderer {
         return subSchema.get('title');
       }),
       'onChange': (newValue) => {
-        console.log('onChange', newValue);
+        // console.log('onChange', newValue);
         let state = {};
         state[id + 'selected'] = newValue;
         me.setState(state);
@@ -364,9 +366,10 @@ export default class Renderer {
     if (schema && schema.get('renderer') && this.options.get('renderers')) {
       // override renderer
       if (this.options.get('renderers').get(schema.get('renderer'))) {
-        component = (field) => {
-          return this.options.get('renderers').get(schema.get('renderer'))(field, this.options);
-        };
+        // component = (field) => {
+        // return this.options.get('renderers').get(schema.get('renderer'))(field, this.options);
+        // };
+        return this.options.get('renderers').get(schema.get('renderer'))({schema, path, id, name}, this.options);
       }
     }
 

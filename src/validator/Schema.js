@@ -33,7 +33,9 @@ export const validate = (values, form) => {
     return errors;
   }
 
-  console.log(valid, validator[form.schema.hashCode()].errors);
+  if (__DEBUG__) {
+    console.log(valid, validator[form.schema.hashCode()].errors);
+  }
 
   const rootKeywords = ['required', 'dependencies', 'additionalProperties'];
 
@@ -92,7 +94,9 @@ export const validate = (values, form) => {
     // nibble = err.message;
   });
 
-  console.log('errors', errors);
+  if (__DEBUG__) {
+    console.log('errors', errors);
+  }
   return errors;
 };
 

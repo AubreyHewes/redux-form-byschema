@@ -12,6 +12,10 @@
   "plugins": [
     "react"
   ],
+  "globals": {
+    "__DEV__": false,
+    "__DEBUG__": false
+  },
   "rules": {
     "semi" : [2, "always"],
     "max-len": [2, 120, 2],
