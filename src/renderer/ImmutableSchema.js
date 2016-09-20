@@ -109,20 +109,43 @@ export default class Renderer {
     const me = this;
     const realPath = path;
 
+    const field = createElement(Field, {
+      component: 'input',
+      type: 'text',
+      name: realPath.concat([propName]).join('.')
+    });
+    console.log(field);
+
     // console.log(schema.toJS());
     container.children.push(this.renderChunk(realPath.concat([propName]), new Immutable.Map({
       'type': 'string',
       'title': schema.get('title'),
       'name': propName,
+      'default': me.getState() && me.getState()[id + 'selected']
+        ? me.getState()[id + 'selected'] : schema.get('default'),
+      'inputRenderer': schema.get('inputRenderer'),
       'required': schema.get('required'),
       'enum': schema.get('oneOf').map((subSchema) => {
         return subSchema.get('title');
       }),
       'onChange': (newValue) => {
+        console.log('onChange', newValue);
         let state = {};
         state[id + 'selected'] = newValue;
         me.setState(state);
-        me.removeField(me.getNameFromPath(realPath));
+
+        me._test = state;
+        // let subSchema = schema.get('oneOf').filter((subSchema) => {
+        //   return state[id + 'selected'] === subSchema.get('title');
+        // });
+        // console.log(subSchema);
+        //
+        // if (subSchema.get('additionalProperties') === false) {
+        //   subSchema.get('properties').map((subSchema) => {
+        //     // me.removeField(me.getNameFromPath(realPath));
+        //   });
+        // }
+
         me.changeField(me.getNameFromPath(realPath.concat(['value'])), newValue);
       }
     }), data));
@@ -132,7 +155,10 @@ export default class Renderer {
       // if (me.getState()) {
       //   console.log(me.getState()[id + 'selected']);
       // }
-      if (me.getState() && me.getState()[id + 'selected'] === subSchema.get('title')) {
+      // console.log('state', me._test && me._test[id + 'selected'] ? me._test[id + 'selected'] : null);
+
+      if (me.getState() && me.getState()[id + 'selected'] === subSchema.get('title') ||
+          !me.getState() && schema.get('default') === subSchema.get('title')) {
         return me.renderChunk(realPath.concat([]), subSchema/* .delete('title') */, data);
       }
       // subSchema = subSchema.delete('title').set('disabled', false);
@@ -208,6 +234,10 @@ export default class Renderer {
       value = schema.get('default');
     }
 
+    if (schema.get('renderer') === 'hidden') {
+      return this.renderInput('hidden', schema, subPath, value, id, name);
+    }
+
     if (schema.get('inputRenderer') === 'hidden') {
       return this.renderInput('hidden', schema, subPath, value, id, name);
     }
@@ -226,7 +256,8 @@ export default class Renderer {
 
       default:
 
-        if (this.options.get('hasLabels') || this.options.get('hasLabels') === undefined) {
+        if ((this.options.get('hasLabels') || this.options.get('hasLabels') === undefined) &&
+            !schema.get('renderer')) {
           container.children.push(this.renderLabel(schema, subPath, id));
         }
 
@@ -295,7 +326,8 @@ export default class Renderer {
         if (schema.get('format') === 'email') {
           type = 'email';
         }
-        if (schema.get('inputRenderer') === 'textarea') {
+        if (schema.get('inputRenderer') === 'textarea' ||
+            schema.get('options') && schema.get('options').get('renderHint') === 'textarea') {
           type = 'textarea';
         }
         if (schema.get('inputRenderer') === 'password') {
@@ -328,6 +360,14 @@ export default class Renderer {
     }
     if (type === 'display') {
       component = this.renderDisplayComponent;
+    }
+    if (schema && schema.get('renderer') && this.options.get('renderers')) {
+      // override renderer
+      if (this.options.get('renderers').get(schema.get('renderer'))) {
+        component = (field) => {
+          return this.options.get('renderers').get(schema.get('renderer'))(field, this.options);
+        };
+      }
     }
 
     let cfg = {
@@ -418,20 +458,21 @@ export default class Renderer {
       (schema.get('options') ? schema.get('options').get('enum_titles') : null);
 
     return createElement('div', {
-      className: 'radiogroup ' + this.options.get('inputWrapperClass'),
+      className: 'form-check radiogroup ' + this.options.get('inputWrapperClass'),
       children: schema.get('enum').map((itemValue, idx) => {
         return createElement('label', {
           key: idx + itemValue,
-          className: this.options.get('radioGroupInlineClass'),
+          className: 'form-check-label',
           children: [
             createElement(Field, {
+              onChange: schema.get('onChange'),
+              className: 'form-check-input',
               key: name + itemValue,
               component: this.renderInputComponent,
               id: id + '-' + idx,
               type: 'radio',
               name: name,
               required: schema.get('required') ? 'required' : '',
-              autoComplete: schema.get('autocomplete'),
               value: itemValue
             }),
             enumTitles && enumTitles.get(idx) ? enumTitles.get(idx) : itemValue
@@ -482,7 +523,9 @@ export default class Renderer {
     };
 
     if (field.meta.touched) {
-      cfg.className += ' ' + this.options.get(field.meta.error ? 'groupErrorClass' : 'groupSuccessClass');
+      cfg.className += ' ' + this.options.get(field.meta.error ? 'groupErrorClass' : (
+          field.required && !field.input.value ? 'groupErrorClass' : 'groupSuccessClass'
+        ));
     }
 
     return createElement('div', cfg);
@@ -512,6 +555,8 @@ export default class Renderer {
       };
     }
 
+    // console.log(schema.toJS());
+
     if (this.options.get('inputRenderers')) {
       // override inputRenderer by type
       if (field.type && this.options.get('inputRenderers').get(field.type)) {
@@ -519,7 +564,8 @@ export default class Renderer {
       }
 
       // custom inputRenderer
-      if (schema.get('inputRenderer') && this.options.get('inputRenderers').get(schema.get('inputRenderer'))) {
+      if (schema && schema.get('inputRenderer') &&
+          this.options.get('inputRenderers').get(schema.get('inputRenderer'))) {
         return this.options.get('inputRenderers').get(schema.get('inputRenderer'))(field, this.options);
       }
     }

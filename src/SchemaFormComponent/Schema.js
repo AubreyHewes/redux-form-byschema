@@ -2,7 +2,6 @@ import { Component, createElement, PropTypes } from 'react';
 import { propTypes } from 'redux-form';
 import { isBoolean, isString, mapObject, isObject } from 'underscore';
 import Renderer from '../renderer/Schema';
-import ReCaptcha from 'react-google-recaptcha';
 
 /**
  * A SchemaForm React Component; returns a form using the configured props.schema
@@ -72,22 +71,10 @@ export default class SchemaForm extends Component {
       children: [
         this.props.children,
         this.renderSchema(schema, {}, config),
-        this.renderReCaptcha(config),
         this.renderButtons(config)
       ]
     });
   };
-
-  renderReCaptcha (config) { // offset-sm-4 col-sm-8 col-xs-12
-    return config.reCaptchaSiteKey ? createElement(ReCaptcha, {
-      className: config.buttonWrapperClass ? 'recaptcha ' + config.buttonWrapperClass : 'recaptcha',
-      sitekey: config.reCaptchaSiteKey,
-      onChange: (value) => {
-        // console.log('reCaptcha', value);
-        this.props.dispatch(this.props.change('root.recaptcha', value));
-      }
-    }) : null;
-  }
 
   renderButtons (config) {
     let buttons = {

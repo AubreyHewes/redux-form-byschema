@@ -1,4 +1,5 @@
 import Ajv from 'ajv';
+import { isObject } from 'underscore';
 
 let validator = {};
 
@@ -27,11 +28,12 @@ export const validate = (values, form) => {
   }
   let valid = validator[form.schema.hashCode()](values);
 
+  // console.log('errors', validator[form.schema.hashCode()].errors);
   if (valid) {
     return errors;
   }
 
-  // console.log(valid, validator[form.schema.hashCode()].errors);
+  console.log(valid, validator[form.schema.hashCode()].errors);
 
   const rootKeywords = ['required', 'dependencies', 'additionalProperties'];
 
@@ -53,16 +55,36 @@ export const validate = (values, form) => {
       nibble = nibble[path] = !nibble[path] ? {} : nibble[path];
     });
 
+    // if (err.dataPath === '.business.invoice.invoiceFields.address') {
+    //   console.log('nibble', nibble);
+    // }
+
     if (err.keyword === 'required') {
+      if (!isObject(nibble)) {
+        nibble = {};
+      }
+      // if (err.dataPath === '.business.invoice.invoiceFields.address') {
+      //   console.log('nibble', nibble);
+      //   console.log('err', err);
+      // }
       nibble = nibble[err.params.missingProperty] = 'required';
     }
     if (err.keyword === 'dependencies') {
+      if (!isObject(nibble)) {
+        nibble = {};
+      }
       nibble = nibble[err.params.missingProperty] = 'required';
     }
-    if (err.keyword === 'additionalProperties') {
-      nibble = nibble[err.params.additionalProperty] = err.message;
-    }
+    // if (err.keyword === 'additionalProperties') {
+    //   if (!isObject(nibble)) {
+    //     nibble = {};
+    //   }
+    //   nibble = nibble[err.params.additionalProperty] = err.message;
+    // }
     if (err.keyword === 'pattern') {
+      if (!isObject(nibble)) {
+        nibble = {};
+      }
       nibble = nibble[property] = 'invalidpattern';
     }
 
@@ -70,7 +92,7 @@ export const validate = (values, form) => {
     // nibble = err.message;
   });
 
-  // console.log('valid', errors);
+  console.log('errors', errors);
   return errors;
 };
 

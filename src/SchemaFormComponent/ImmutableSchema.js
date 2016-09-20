@@ -17,6 +17,10 @@ export default class SchemaForm extends BasicSchemaForm {
     if (!this.renderer) {
       this.renderer = new Renderer(ImmutableFromJS(config));
       const me = this;
+
+      this.renderer.formProps = this.props;
+      console.log('props', this.props);
+
       this.renderer.setState = (state) => {
         me.setState(state);
       };
@@ -36,6 +40,7 @@ export default class SchemaForm extends BasicSchemaForm {
     if (schema.get('type') === 'array') {
       return this.renderer.renderArray(schema, this.props.path || [], values);
     }
+    console.log('props', this.props);
     return this.renderer.renderObject(schema, this.props.path || [], values);
   }
 
