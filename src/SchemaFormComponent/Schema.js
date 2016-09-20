@@ -38,6 +38,11 @@ export default class SchemaForm extends Component {
       this.renderer.getState = () => {
         return me.state;
       };
+      this.renderer.removeField = (name) => {
+        // console.log('removeField', me.props.form, name);
+        return me.props.dispatch(me.props.change(name, {}));
+        // return me.props.dispatch(unregisterField(me.props.form, name));
+      };
       this.renderer.changeField = (name, value) => {
         // console.log('changeField', name, value);
         return me.props.dispatch(me.props.change(name, value));
