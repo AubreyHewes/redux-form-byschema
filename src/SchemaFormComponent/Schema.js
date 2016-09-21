@@ -65,10 +65,11 @@ export default class SchemaForm extends Component {
       // rest
       ...rest
     } = this.props;
+
     return createElement('form', {
       ... rest,
       'data-role': 'form',
-      'novalidate': true,
+      'noValidate': true,
       children: [
         this.props.children,
         this.renderSchema(schema, {}, config),
@@ -99,6 +100,9 @@ export default class SchemaForm extends Component {
       return null;
     }
 
+    children.push(this.props.error
+      ? createElement('div', {className: 'form-control-feedback'}, this.props.error) : null);
+
     const hasLabels = config.hasLabels || config.hasLabels === undefined;
     const wrapperClassName = hasLabels ? (config && config.buttonWrapperClass ? config.buttonWrapperClass : '')
       : (config && config.inputWrapperClass ? config.inputWrapperClass : '');
@@ -106,7 +110,7 @@ export default class SchemaForm extends Component {
     return createElement('div', {
       className: (config.groupClass || '') + ' form-group-buttons',
       children: [createElement('div', {
-        className: wrapperClassName,
+        className: wrapperClassName + (this.props.error ? ' has-danger' : ''),
         children: children
       })]
     });

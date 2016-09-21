@@ -506,6 +506,8 @@ export default class Renderer {
       return this.renderFieldInputComponent(type, field);
     }
 
+    // console.log(field);
+
     let children = [
       this.renderFieldInputComponent(type, field),
       // <small class="form-text text-muted">Example help text that remains unchanged.</small>

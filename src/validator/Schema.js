@@ -13,7 +13,9 @@ let validator = {};
 export const validate = (values, form) => {
   values = JSON.parse(JSON.stringify(values['root'] || {}), (k, v) => (k === 'renderOneOf') ? undefined : v);
 
-  // console.log('validate', values);
+  if (__DEBUG__) {
+    console.log('validate', values);
+  }
   const errors = {};
 
   if (!validator[form.schema.hashCode()]) {
