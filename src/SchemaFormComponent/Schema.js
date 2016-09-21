@@ -68,6 +68,7 @@ export default class SchemaForm extends Component {
     return createElement('form', {
       ... rest,
       'data-role': 'form',
+      'novalidate': true,
       children: [
         this.props.children,
         this.renderSchema(schema, {}, config),
