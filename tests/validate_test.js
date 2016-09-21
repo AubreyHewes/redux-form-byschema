@@ -9,6 +9,8 @@ import { expect } from 'chai';
 import validate from '../src/validator/Schema';
 import Immutable from 'immutable';
 
+global.__DEBUG__ = false; // eslint-disable-line no-unused-vars
+
 describe('validate', function () {
   it('no constraints; should be valid', function () {
     const result = validate({}, {schema: new Immutable.Map({

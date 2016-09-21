@@ -222,6 +222,12 @@ if (TARGET === 'test' || TARGET === 'test:tdd' || !TARGET) {
             config.paths.tests
           ]
         }
+      ],
+      plugins: [
+        new webpack.DefinePlugin({
+          '__DEBUG__': 'false',
+          'process.env.NODE_ENV': JSON.stringify('production')
+        })
       ]
     }
   });
