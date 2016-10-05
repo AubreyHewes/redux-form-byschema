@@ -7,10 +7,12 @@ let validator = {};
  *
  * @param values
  * @param form
+ * @param customKeywords
+ * @param customFormats
  *
  * @returns {{}}
  */
-export const validate = (values, form) => {
+export const validate = (values, form, customKeywords, customFormats) => {
   values = JSON.parse(JSON.stringify(values['root'] || {}), (k, v) => (k === 'renderOneOf') ? undefined : v);
 
   if (__DEBUG__) {
@@ -21,7 +23,20 @@ export const validate = (values, form) => {
   if (!validator[form.schema.hashCode()]) {
     try {
       // this is crappy but ajv is not immutable...
-      validator[form.schema.hashCode()] = new Ajv({ allErrors: true }).compile(form.schema.toJS());
+      let ajv = new Ajv({ allErrors: true });
+      if (customKeywords) {
+        Object.keys(customKeywords).forEach((key) => {
+          if (customKeywords[key].validate) {
+            ajv.addKeyword(key, customKeywords[key]);
+          }
+        });
+      }
+      if (customFormats) {
+        Object.keys(customFormats).forEach((key) => {
+          ajv.addFormat(key, customFormats[key]);
+        });
+      }
+      validator[form.schema.hashCode()] = ajv.compile(form.schema.toJS());
     } catch (e) {
       validator[form.schema.hashCode()] = function () {
         return true;

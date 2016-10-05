@@ -457,7 +457,7 @@ export default class Renderer {
   };
 
   createField (cfg) {
-    cfg.ref = cfg.name;
+    // cfg.ref = cfg.name;
     return createElement(Field, cfg);
   };
 
@@ -507,7 +507,7 @@ export default class Renderer {
   };
 
   renderFieldComponent = (type, field) => {
-
+    //
     // add a error ref to the field ( this is for allowing scroll to error stuff )
     // if (field.meta.touched && field.meta.error) {
     //   console.log(field);
