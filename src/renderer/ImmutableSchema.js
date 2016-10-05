@@ -528,9 +528,7 @@ export default class Renderer {
     };
 
     if (field.meta.touched) {
-      cfg.className += ' ' + this.options.get(field.meta.error ? 'groupErrorClass' : (
-          field.required && !field.input.value ? 'groupErrorClass' : 'groupSuccessClass'
-        ));
+      cfg.className += ' ' + this.options.get(field.meta.error ? 'groupErrorClass' : 'groupSuccessClass');
     }
 
     return createElement('div', cfg);
