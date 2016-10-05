@@ -68,6 +68,7 @@ export default class SchemaForm extends Component {
 
     return createElement('form', {
       ... rest,
+      // onSubmitFail: () => console.log('failed', arguments),
       'data-role': 'form',
       'noValidate': true,
       children: [

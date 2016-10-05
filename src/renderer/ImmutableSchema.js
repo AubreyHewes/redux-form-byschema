@@ -410,7 +410,7 @@ export default class Renderer {
       cfg.autoCorrect = 'off';
     }
 
-    return createElement(Field, cfg);
+    return this.createField(cfg);
   };
 
   renderEnum = (schema, path, value, id, name) => {
@@ -453,6 +453,11 @@ export default class Renderer {
       type: 'select',
       children: options
     };
+    return this.createField(cfg);
+  };
+
+  createField (cfg) {
+    cfg.ref = cfg.name;
     return createElement(Field, cfg);
   };
 
@@ -467,7 +472,7 @@ export default class Renderer {
           key: idx + itemValue,
           className: 'form-check-label',
           children: [
-            createElement(Field, {
+            this.createField({
               onChange: schema.get('onChange'),
               className: 'form-check-input',
               key: name + itemValue,
@@ -502,11 +507,19 @@ export default class Renderer {
   };
 
   renderFieldComponent = (type, field) => {
+
+    // add a error ref to the field ( this is for allowing scroll to error stuff )
+    // if (field.meta.touched && field.meta.error) {
+    //   console.log(field);
+    //   field = React.cloneElement(field, { ref: 'error' });
+    //   console.log(field);
+    // }
+
+    // console.log(field);
+
     if (field.type === 'radio') {
       return this.renderFieldInputComponent(type, field);
     }
-
-    // console.log(field);
 
     let children = [
       this.renderFieldInputComponent(type, field),
