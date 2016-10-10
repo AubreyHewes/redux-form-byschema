@@ -289,14 +289,11 @@ export default class Renderer {
     return createElement(FieldArray, {
       name: this.getNameFromPath(path),
       component: ({ fields, meta, name }) => {
-        let path = this.getPathFromName(name);
-        // console.log(fields);
         return createElement('div', {
           className: 'schema-property schema-datatype-array',
           children: fields.map((field, idx) => {
-            let subPath = path;
-            subPath.push(idx);
-            return this.renderObject(schema.get('items').set('title', schema.get('title') + ' #' + (idx + 1)), subPath);
+            return this.renderObject(schema.get('items').set('title', schema.get('title') + ' #' + (idx + 1)),
+              this.getPathFromName(field));
           })
         });
       }
