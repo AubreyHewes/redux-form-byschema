@@ -93,7 +93,7 @@ export default class Renderer {
    * @returns {*}
    */
   renderOneOf (schema, path, data) {
-    const propName = 'renderOneOf';
+    const propName = 'value';
     const id = (path.length ? path.join('-') + '-' : '') + propName;
 
     let classNames = ['schema-property', 'schema-property-oneOf'];
@@ -117,21 +117,26 @@ export default class Renderer {
     // if (__DEBUG__) {
     //   console.log(field);
     // }
+    const oneOfs = schema.get('oneOf').filter((subSchema) => {
+      return subSchema.get('properties').get('value').get('default') !== null;
+    });
 
     // console.log(schema.toJS());
     container.children.push(this.renderChunk(realPath.concat([propName]), new Immutable.Map({
       'type': 'string',
       'title': schema.get('title'),
       'name': propName,
-      'default': me.getState() && me.getState()[id + 'selected']
-        ? me.getState()[id + 'selected'] : schema.get('default'),
+      'default': '__EMPTY__',
       'inputRenderer': schema.get('inputRenderer'),
       'required': schema.get('required'),
-      'enum': schema.get('oneOf').map((subSchema) => {
-        return subSchema.get('title');
+      'enum': oneOfs.map((subSchema) => {
+        return subSchema.get('properties').get('value').get('default');
+      }),
+      'enum_titles': oneOfs.map((subSchema) => {
+        return subSchema.get('properties').get('value').get('title');
       }),
       'onChange': (newValue) => {
-        // console.log('onChange', newValue);
+        console.log('onChange', newValue);
         let state = {};
         state[id + 'selected'] = newValue;
         me.setState(state);
@@ -159,8 +164,13 @@ export default class Renderer {
       // }
       // console.log('state', me._test && me._test[id + 'selected'] ? me._test[id + 'selected'] : null);
 
-      if (me.getState() && me.getState()[id + 'selected'] === subSchema.get('title') ||
-          !me.getState() && schema.get('default') === subSchema.get('title')) {
+      const value = subSchema.get('properties').get('value').get('default');
+
+      if (me.getState() && me.getState()[id + 'selected'] === value ||
+          !me.getState() && schema.get('default') === value) {
+        subSchema = subSchema.set('properties', subSchema.get('properties').filter((item) => {
+          return item.get('title') !== 'value';
+        }));
         return me.renderChunk(realPath.concat([]), subSchema/* .delete('title') */, data);
       }
       // subSchema = subSchema.delete('title').set('disabled', false);

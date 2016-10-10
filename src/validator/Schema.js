@@ -54,7 +54,7 @@ export const validate = (values, form, customKeywords, customFormats) => {
     console.log(valid, validator[form.schema.hashCode()].errors);
   }
 
-  const rootKeywords = ['required', 'dependencies', 'additionalProperties'];
+  const rootKeywords = ['required', 'dependencies', 'additionalProperties', 'oneOf'];
 
   errors.root = {};
 
@@ -105,6 +105,17 @@ export const validate = (values, form, customKeywords, customFormats) => {
         nibble = {};
       }
       nibble = nibble[property] = 'invalidpattern';
+    }
+
+    if (err.keyword === 'oneOf') {
+      if (!isObject(nibble)) {
+        nibble = {};
+      }
+      if (Object.keys(nibble).length > 0) {
+        console.log(nibble);
+        return;
+      }
+      nibble = nibble['renderOneOf'] = 'required';
     }
 
     // todo this doesn't work... ref is still an object
