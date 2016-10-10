@@ -288,15 +288,18 @@ export default class Renderer {
 
     return createElement(FieldArray, {
       name: this.getNameFromPath(path),
-      component: ({ fields, meta, name }) => {
-        return createElement('div', {
-          className: 'schema-property schema-datatype-array',
-          children: fields.map((field, idx) => {
-            return this.renderObject(schema.get('items').set('title', schema.get('title') + ' #' + (idx + 1)),
-              this.getPathFromName(field));
-          })
-        });
-      }
+      schema: schema,
+      component: this.renderArrayItems
+    });
+  };
+
+  renderArrayItems = ({ fields, meta, schema }) => {
+    return createElement('div', {
+      className: 'schema-property schema-datatype-array',
+      children: fields.map((field, idx) => {
+        return this.renderObject(schema.get('items').set('title', schema.get('title') + ' #' + (idx + 1)),
+          this.getPathFromName(field));
+      })
     });
   };
 
