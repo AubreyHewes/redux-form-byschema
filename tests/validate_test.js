@@ -56,7 +56,7 @@ describe('validate', function () {
         'test'
       ]
     })});
-    expect(result).to.deep.equal({'root': {'test': 'invalidpattern'}});
+    expect(result).to.deep.equal({'root': {'test': 'pattern'}});
   });
 
   // it('dependency constraint; should be valid', function () {

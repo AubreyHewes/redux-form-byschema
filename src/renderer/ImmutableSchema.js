@@ -136,7 +136,7 @@ export default class Renderer {
         return subSchema.get('properties').get('value').get('title');
       }),
       'onChange': (newValue) => {
-        console.log('onChange', newValue);
+        // console.log('onChange', newValue);
         let state = {};
         state[id + 'selected'] = newValue;
         me.setState(state);
