@@ -57,12 +57,12 @@ const common = {
       },
       {
         test: /\.json$/,
-        loader: 'json',
-        include: path.join(ROOT_PATH, 'package.json')
+        loader: 'json'
       }
     ]
   },
   plugins: [
+    new webpack.IgnorePlugin(/regenerator|nodent|js\-beautify/, /ajv/),
     new SystemBellPlugin()
   ]
 };
@@ -259,6 +259,7 @@ const distCommon = {
     ]
   },
   plugins: [
+    new webpack.IgnorePlugin(/regenerator|nodent|js\-beautify/, /ajv/),
     new SystemBellPlugin()
   ]
 };
