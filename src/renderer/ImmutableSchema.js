@@ -294,12 +294,20 @@ export default class Renderer {
   };
 
   renderArrayItems = ({ fields, meta, schema }) => {
+    // const addRow = () => fields.push({});
     return createElement('div', {
       className: 'schema-property schema-datatype-array',
-      children: fields.map((field, idx) => {
-        return this.renderObject(schema.get('items').set('title', schema.get('title') + ' #' + (idx + 1)),
-          this.getPathFromName(field));
-      })
+      children: [
+        fields.map((field, idx) => {
+          return this.renderObject(schema.get('items').set('title', schema.get('title') + ' #' + (idx + 1)),
+            this.getPathFromName(field));
+        })/*,
+        createElement('div', {
+          children: [
+            <button type="button" onClick={addRow}>Toevoegen</button>
+          ]
+        })*/
+      ]
     });
   };
 
@@ -561,7 +569,8 @@ export default class Renderer {
     if (type === 'div') {
       return createElement(type, {
         className: this.options.get('inputStaticClass'),
-        children: [field.input.value]
+        children: [typeof field.input.value === 'boolean'
+          ? this.options.get('locale').getString(field.input.value) : field.input.value]
       });
     }
 

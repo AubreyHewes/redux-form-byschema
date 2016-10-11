@@ -4,7 +4,10 @@ class Locale extends LocaleBase {
   strings = {
     'required': 'Dit veld is vereist',
     'invalid': 'Ongeldig waarde',
-    'invalidpattern': 'Ongeldig waarde',
+    'pattern': 'Ongeldig waarde',
+    'format': 'Ongeldig waarde',
+    'true': 'Ja',
+    'false': 'Nee',
     'select': {
       'addLabelText': '"{label}" toevoegen?',
       'clearAllText': 'Alles wissen',
