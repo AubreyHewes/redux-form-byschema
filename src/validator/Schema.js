@@ -1,4 +1,4 @@
-import Ajv from 'ajv';
+import Ajv from 'ajv/lib/ajv';
 import { isObject } from 'underscore';
 
 let validator = {};
@@ -61,10 +61,12 @@ export const validate = (values, form, customKeywords, customFormats) => {
   validator[form.schema.hashCode()].errors.map((err) => {
     // console.log(err);
     let nibble = errors.root;
-    let path = err.dataPath.split('.').slice(1);
+    let path = err.dataPath.replace(/\[([0-9]+)\]/m, '.$1').split('.').slice(1);
 
     // get property
     let property = null;
+    let message = null;
+
     if (rootKeywords.indexOf(err.keyword) === -1) {
       property = path.pop();
     }
@@ -74,37 +76,8 @@ export const validate = (values, form, customKeywords, customFormats) => {
       nibble = nibble[path] = !nibble[path] ? {} : nibble[path];
     });
 
-    // if (err.dataPath === '.business.invoice.invoiceFields.address') {
-    //   console.log('nibble', nibble);
-    // }
-
-    if (err.keyword === 'required') {
-      if (!isObject(nibble)) {
-        nibble = {};
-      }
-      // if (err.dataPath === '.business.invoice.invoiceFields.address') {
-      //   console.log('nibble', nibble);
-      //   console.log('err', err);
-      // }
-      nibble = nibble[err.params.missingProperty] = 'required';
-    }
-    if (err.keyword === 'dependencies') {
-      if (!isObject(nibble)) {
-        nibble = {};
-      }
-      nibble = nibble[err.params.missingProperty] = 'required';
-    }
-    // if (err.keyword === 'additionalProperties') {
-    //   if (!isObject(nibble)) {
-    //     nibble = {};
-    //   }
-    //   nibble = nibble[err.params.additionalProperty] = err.message;
-    // }
-    if (err.keyword === 'pattern') {
-      if (!isObject(nibble)) {
-        nibble = {};
-      }
-      nibble = nibble[property] = 'invalidpattern';
+    if (err.keyword === 'required' || err.keyword === 'dependencies') {
+      property = err.params.missingProperty;
     }
 
     if (err.keyword === 'oneOf') {
@@ -114,18 +87,20 @@ export const validate = (values, form, customKeywords, customFormats) => {
       if (Object.keys(nibble).length > 0) {
         return;
       }
-      nibble = nibble['renderOneOf'] = 'required';
+      property = 'renderOneOf';
+      message = 'required';
+    }
+
+    if (err.keyword === 'minLength' && err.params.limit === 1) {
+      message = 'required';
     }
 
     if (err.keyword === 'validator') {
-      if (!isObject(nibble)) {
-        nibble = {};
-      }
-      nibble = nibble[err.params.property] = err.message;
+      property = err.params.property;
+      message = err.message;
     }
 
-    // todo this doesn't work... ref is still an object
-    // nibble = err.message;
+    nibble = nibble[property] = message || err.keyword;
   });
 
   if (__DEBUG__) {

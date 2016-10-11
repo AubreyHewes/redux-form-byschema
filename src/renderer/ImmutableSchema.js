@@ -534,7 +534,7 @@ export default class Renderer {
     let children = [
       this.renderFieldInputComponent(type, field),
       // <small class="form-text text-muted">Example help text that remains unchanged.</small>
-      field.meta.touched && field.meta.error ? createElement('div', {
+      (field.meta.touched || field.meta.dirty) && field.meta.error ? createElement('div', {
         className: 'form-control-feedback', children: [
           this.options.get('locale') ? this.options.get('locale').getString(field.meta.error) : field.meta.error
         ]
@@ -550,8 +550,8 @@ export default class Renderer {
       }) : children
     };
 
-    if (field.meta.touched) {
-      cfg.className += ' ' + this.options.get(field.meta.error ? 'groupErrorClass' : 'groupSuccessClass');
+    if (field.meta.touched || field.meta.dirty) {
+      cfg.className += ' ' + this.options.get(field.meta.invalid ? 'groupErrorClass' : 'groupSuccessClass');
     }
 
     return createElement('div', cfg);
