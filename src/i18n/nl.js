@@ -7,16 +7,7 @@ class Locale extends LocaleBase {
     'pattern': 'Ongeldig waarde',
     'format': 'Ongeldig waarde',
     'true': 'Ja',
-    'false': 'Nee',
-    'select': {
-      'addLabelText': '"{label}" toevoegen?',
-      'clearAllText': 'Alles wissen',
-      'clearValueText': 'Wissen',
-      'noResultsText': 'Niks gevonden',
-      'placeholder': 'Selecteer...',
-      'searchingText': 'Word gezocht...',
-      'searchPromptText': 'Typen om te zoeken'
-    }
+    'false': 'Nee'
   };
 }
 

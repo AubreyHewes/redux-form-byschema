@@ -40,7 +40,7 @@ ajv-keywords@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-1.1.1.tgz#02550bc605a3e576041565628af972e06c549d50"
 
-ajv@^4.6.0, ajv@^4.7.0:
+ajv@^4.7.0:
   version "4.7.7"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-4.7.7.tgz#4980d5f65ce90a2579532eec66429f320dea0321"
   dependencies:
@@ -1205,7 +1205,7 @@ caseless@~0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.11.0.tgz#715b96ea9841593cc33067923f5ec60ebda4f7d7"
 
-catalog@^2.4.4:
+catalog:
   version "2.4.7"
   resolved "https://registry.yarnpkg.com/catalog/-/catalog-2.4.7.tgz#8b44c70448c2b9406b3e45b2a01efb20c984022a"
   dependencies:
@@ -1976,7 +1976,7 @@ es5-ext@^0.10.7, es5-ext@^0.10.8, es5-ext@~0.10.11, es5-ext@~0.10.2, es5-ext@~0.
     es6-iterator "2"
     es6-symbol "~3.1"
 
-es6-error@^3.0.0:
+es6-error@^3.1.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/es6-error/-/es6-error-3.2.0.tgz#e567cfdcb324d4e7ae5922a3700ada5de879a0ca"
 
@@ -4911,13 +4911,13 @@ reduce-function-call@^1.0.1:
   dependencies:
     balanced-match "~0.1.0"
 
-redux-form@6.0.2:
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/redux-form/-/redux-form-6.0.2.tgz#502bb798444531f4b23b770e9a3829f24f21297b"
+redux-form@6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/redux-form/-/redux-form-6.1.0.tgz#cc88672fb6e30dfd1437afd3673dc3c58510136a"
   dependencies:
     array-findindex-polyfill "^0.1.0"
     deep-equal "^1.0.1"
-    es6-error "^3.0.0"
+    es6-error "^3.1.0"
     hoist-non-react-statics "^1.0.5"
     invariant "^2.2.1"
     is-promise "^2.1.0"

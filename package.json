@@ -43,11 +43,11 @@
     "invariant": "^2.2.1",
     "react-addons-pure-render-mixin": "^15.2.0",
     "react-addons-shallow-compare": "^15.2.0",
-    "redux-form": "6.0.2",
+    "redux-form": "6.1.0",
     "underscore": "1.8.3"
   },
   "devDependencies": {
-    "ajv": "^4.6.0",
+    "ajv": "^4.7.0",
     "babel-cli": "^6.11.4",
     "babel-core": "^6.11.4",
     "babel-eslint": "^6.1.2",
@@ -115,7 +115,7 @@
     "webpack-merge": "^0.14.1"
   },
   "peerDependencies": {
-    "ajv": "^4.6.0",
+    "ajv": "^4.7.0",
     "immutable": "^3.7.6",
     "react": "^15.2.0",
     "react-redux": "^4.4.5",
