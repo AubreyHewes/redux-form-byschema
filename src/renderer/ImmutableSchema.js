@@ -475,7 +475,7 @@ export default class Renderer {
   };
 
   createField (cfg) {
-    cfg.withRef = cfg.name;
+    // cfg.withRef = cfg.name;
     return createElement(Field, cfg);
   };
 
