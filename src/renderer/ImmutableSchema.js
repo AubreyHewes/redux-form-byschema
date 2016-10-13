@@ -1,6 +1,6 @@
 import Immutable from 'immutable';
 import React, { createElement } from 'react';
-import { Field, FieldArray } from 'redux-form';
+import { Field, FieldArray } from 'redux-form/immutable';
 import Locale from '../i18n/en';
 
 /**
