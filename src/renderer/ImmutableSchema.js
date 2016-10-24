@@ -46,6 +46,13 @@ export default class Renderer {
       }
     }
 
+    if (schema && schema.get('renderer') && this.options.get('renderers')) {
+      // override renderer
+      if (this.options.get('renderers').get(schema.get('renderer'))) {
+        return this.options.get('renderers').get(schema.get('renderer'))({ schema, path, data }, this);
+      }
+    }
+
     let container = {
       key: path,
       disabled: schema.get('disabled'),
@@ -384,10 +391,7 @@ export default class Renderer {
     if (schema && schema.get('renderer') && this.options.get('renderers')) {
       // override renderer
       if (this.options.get('renderers').get(schema.get('renderer'))) {
-        // component = (field) => {
-        // return this.options.get('renderers').get(schema.get('renderer'))(field, this.options);
-        // };
-        return this.options.get('renderers').get(schema.get('renderer'))({schema, path, id, name}, this.options);
+        return this.options.get('renderers').get(schema.get('renderer'))({schema, path, id, name, value, type}, this);
       }
     }
 
