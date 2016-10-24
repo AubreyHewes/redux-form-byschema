@@ -118,8 +118,6 @@ export default class SchemaForm extends Component {
   };
 
   renderButton (type, config) {
-    // console.log('renderButton', type, config);
-
     let { text, ...props } = config;
     if (isBoolean(props)) {
       props = {};
@@ -159,9 +157,7 @@ export default class SchemaForm extends Component {
       }
     }
 
-    // console.log(this.props);
-    // console.log(props);
-    if (!props.disabled && deActivatePristine) {
+    if (typeof props.disabled === 'undefined' && deActivatePristine) {
       props.disabled = this.props.submitting || this.props.pristine;
     }
 
