@@ -1,7 +1,7 @@
 {
   "name": "redux-form-byschema",
-  "version": "0.0.0-alpha11",
-  "description": "Generate a redux-form (v6) from a json schema",
+  "version": "0.0.0-alpha12",
+  "description": "Generate a redux-form from a JSON schema",
   "author": "Aubrey Hewes <https://github.com/AubreyHewes>",
   "user": "AubreyHewes",
   "license": "MIT",
@@ -43,8 +43,8 @@
     "invariant": "^2.2.1",
     "react-addons-pure-render-mixin": "^15.2.0",
     "react-addons-shallow-compare": "^15.2.0",
-    "redux-form": "6.1.0",
-    "underscore": "1.8.3"
+    "redux-form": "^6.1.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "ajv": "^4.7.0",
