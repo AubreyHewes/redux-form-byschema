@@ -60,6 +60,7 @@ export default class SchemaForm extends Component {
       invalid, pristine, reset, submitting, submitFailed, touch, untouch, valid, initialValues, shouldAsyncValidate,
       validate, initialized, registeredFields, arrayMove, arrayRemoveAll, startAsyncValidation, startSubmit,
       stopAsyncValidation, stopSubmit, setSubmitFailed, updateSyncErrors, blur, change, array,
+      triggerSubmit, clearSubmit, submit,
       //
       submitSucceeded, schemaCompileError, pure, autofill,
       // rest
