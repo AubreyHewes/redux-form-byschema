@@ -293,6 +293,16 @@ export default class Renderer {
       return this.renderChunk(path, schema.get('items').set('title', schema.get('title')).set('multiple', true), value);
     }
 
+    // custom renderer
+    if (schema && schema.get('renderer') && this.options.get('renderers')) {
+      // override renderer
+      if (this.options.get('renderers').get(schema.get('renderer'))) {
+        return this.options.get('renderers').get(schema.get('renderer'))({
+          schema, path, id: this.getIdFromPath(path), name: this.getNameFromPath(path), value
+        }, this);
+      }
+    }
+
     return createElement(FieldArray, {
       name: this.getNameFromPath(path),
       schema: schema,
