@@ -450,15 +450,15 @@ export default class Renderer {
       return this.renderBooleanEnum(schema, path, value, id, name);
     }
 
+    if (schema.get('renderer') && this.options.get('renderers')) {
+      // override renderer
+      if (this.options.get('renderers').get(schema.get('renderer'))) {
+        return this.options.get('renderers').get(schema.get('renderer'))({schema, path, id, name, value}, this);
+      }
+    }
+
     let enumTitles = schema.get('enum_titles') ||
       (schema.get('options') ? schema.get('options').get('enum_titles') : null);
-
-    // let options = schema.get('enum').map((value, idx) => {
-    //   return {
-    //     value: value,
-    //     label: enumTitles && enumTitles.get(idx) ? enumTitles.get(idx) : value
-    //   };
-    // }).toJS();
 
     let options = schema.get('enum').map((value, idx) => {
       return createElement('option', {
@@ -597,6 +597,7 @@ export default class Renderer {
       ... input,
       className
     };
+
     if (rest.onChange) {
       props.onChange = (e) => {
         rest.onChange(e.target.value);
@@ -619,9 +620,8 @@ export default class Renderer {
       }
     }
 
-    return createElement(type, {
-      ...props
-    });
+    // console.log('props', props);
+    return createElement(type, props);
   }
 
 }
