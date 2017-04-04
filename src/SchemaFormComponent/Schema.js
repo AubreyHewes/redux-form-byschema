@@ -62,7 +62,7 @@ export default class SchemaForm extends Component {
       stopAsyncValidation, stopSubmit, setSubmitFailed, updateSyncErrors, blur, change, array,
       triggerSubmit, clearSubmit, submit,
       //
-      submitSucceeded, schemaCompileError, pure, autofill, clearSubmitErrors,
+      submitSucceeded, schemaCompileError, pure, autofill, clearSubmitErrors, warning,
       // rest
       ...rest
     } = this.props;

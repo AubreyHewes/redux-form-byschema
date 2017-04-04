@@ -1,13 +1,16 @@
-import LocaleBase from './LocaleBase';
+import LocaleEN from './en';
 
-class Locale extends LocaleBase {
+class Locale extends LocaleEN {
   strings = {
     'required': 'Dit veld is vereist',
     'invalid': 'Ongeldig waarde',
     'pattern': 'Ongeldig waarde',
     'format': 'Ongeldig waarde',
+    'enum': 'Ongeldig waarde',
     'true': 'Ja',
-    'false': 'Nee'
+    'false': 'Nee',
+    addNew: 'Nieuwe %s toevoegen',
+    delete: 'Verwijderen'
   };
 }
 

@@ -6,8 +6,11 @@ class Locale extends LocaleBase {
     'invalid': 'Invalid value',
     'pattern': 'Invalid pattern',
     'format': 'Invalid format',
+    'enum': 'Invalid value',
     'true': 'Yes',
-    'false': 'No'
+    'false': 'No',
+    addNew: 'Add new %s',
+    delete: 'Remove'
   };
 }
 

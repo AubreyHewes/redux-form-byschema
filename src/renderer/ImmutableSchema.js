@@ -311,21 +311,55 @@ export default class Renderer {
   };
 
   renderArrayItems = ({ fields, meta, schema }) => {
-    // const addRow = () => fields.push({});
+    const path = this.getPathFromName(fields.name);
+    console.info('schema', schema.toJS());
+    console.info('path', path);
+
+    const title = schema.get('title');
+
     return createElement('div', {
       className: 'schema-property schema-datatype-array',
       children: [
         fields.map((field, idx) => {
-          return this.renderObject(schema.get('items').set('title', schema.get('title') + ' #' + (idx + 1)),
-            this.getPathFromName(field));
-        })/*,
+          const itemItem = createElement('div', {
+            children: [
+              schema.get('title') + ' #' + (idx + 1),
+              createElement('button', {
+                type: 'button',
+                onClick: () => fields.remove(idx),
+                className: 'btn btn-default',
+                children: [
+                  this.getString('delete')
+                ]
+              })
+            ]
+          });
+          return this.renderObject(schema.get('items').set('title', itemItem), this.getPathFromName(field));
+        }),
         createElement('div', {
+          className: this.options.get('groupClass', '') + ' form-group-buttons',
           children: [
-            <button type="button" onClick={addRow}>Toevoegen</button>
+            createElement('div', {
+              className: this.options.get('buttonWrapperClass', ''),
+              children: [
+                createElement('button', {
+                  type: 'button',
+                  onClick: () => fields.push(),
+                  className: 'btn btn-default',
+                  children: [
+                    this.getString('addNew').replace('%s', title)
+                  ]
+                })
+              ]
+            })
           ]
-        })*/
+        })
       ]
     });
+  };
+
+  getString = (key) => {
+    return this.options.get('locale') ? this.options.get('locale').getString(key) : key;
   };
 
   renderLabel = (schema, path, id) => {
