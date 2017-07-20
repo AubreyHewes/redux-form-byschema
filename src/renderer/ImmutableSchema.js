@@ -452,7 +452,8 @@ export default class Renderer {
       max: schema.get('max'),
       pattern: schema.get('pattern'),
       // defaultValue: schema.get('default'),
-      placeholder: schema.get('description') || schema.get('title'),
+      placeholder: (schema.get('description') || schema.get('title')) +
+        (this.options.get('showRequiredInPlaceholder') && schema.get('required') ? ' *' : ''),
       autoComplete: schema.get('autocomplete')
     };
     if (type !== 'hidden') {
@@ -513,7 +514,8 @@ export default class Renderer {
       multiple: schema.get('multiple') ? 'multiple' : '',
       // multi: !!schema.get('multiple'),
       pattern: schema.get('pattern'),
-      placeholder: schema.get('description'),
+      placeholder: schema.get('description') +
+        (this.options.get('showRequiredInPlaceholder') && schema.get('required') ? ' *' : ''),
       autoComplete: schema.get('autocomplete'),
       onChange: schema.get('onChange'),
       type: 'select',
