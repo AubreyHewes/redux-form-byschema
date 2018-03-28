@@ -1,6 +1,9 @@
 import { Component, createElement, PropTypes } from 'react';
 import { propTypes } from 'redux-form';
-import { isBoolean, isString, mapObject, isObject } from 'underscore';
+import isBoolean from 'lodash/isBoolean';
+import isString from 'lodash/isString';
+import isObject from 'lodash/isObject';
+
 import Renderer from '../renderer/Schema';
 
 /**
@@ -8,8 +11,6 @@ import Renderer from '../renderer/Schema';
  *
  * Other options are:
  * setting a config (object)prop containing the following:
- *
- *
  */
 export default class SchemaForm extends Component {
   static propTypes = {
@@ -21,11 +22,6 @@ export default class SchemaForm extends Component {
   };
 
   renderer = null;
-
-  // shouldComponentUpdate (nextProps, nextState) {
-  //   console.log(nextProps, nextState);
-  //   return nextProps.dirty;
-  // }
 
   renderSchema (schema, values, config) {
     if (!this.renderer) {
@@ -92,19 +88,20 @@ export default class SchemaForm extends Component {
     }
 
     let children = [];
-    mapObject(buttons, (value, key) => {
-      if (value === false) {
+    Object.keys(buttons).forEach((key) => {
+      if (buttons[key] === false) {
         return;
       }
-      children.push(this.renderButton(key, value));
+      children.push(this.renderButton(key, buttons[key]));
     });
 
     if (children.length === 0) {
       return null;
     }
 
-    children.push(this.props.error
-      ? createElement('div', {className: 'form-control-feedback'}, this.props.error) : null);
+    if (this.props.error) {
+      children.push(createElement('div', {key: 'form-error', className: 'form-control-feedback'}, this.props.error));
+    }
 
     const hasLabels = config.hasLabels || config.hasLabels === undefined;
     const wrapperClassName = hasLabels ? (config && config.buttonWrapperClass ? config.buttonWrapperClass : '')
@@ -117,7 +114,7 @@ export default class SchemaForm extends Component {
         children: children
       })]
     });
-  };
+  }
 
   renderButton (type, config) {
     let { text, ...props } = config;
@@ -143,6 +140,7 @@ export default class SchemaForm extends Component {
 
     // add submit behaviour
     if (type === 'submit') {
+      props.key = 'submit';
       props.type = type;
       deActivatePristine = true;
       if (config === true) {
@@ -152,6 +150,7 @@ export default class SchemaForm extends Component {
 
     // add reset behaviour
     if (type === 'reset') {
+      props.key = 'reset';
       props.onClick = this.props.reset;
       deActivatePristine = true;
       if (config === true) {

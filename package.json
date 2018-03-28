@@ -1,6 +1,6 @@
 {
   "name": "redux-form-byschema",
-  "version": "0.0.0-alpha15",
+  "version": "0.0.0-alpha16",
   "description": "Generate a redux-form from a JSON schema",
   "author": "Aubrey Hewes <https://github.com/AubreyHewes>",
   "user": "AubreyHewes",
@@ -42,12 +42,10 @@
   "dependencies": {
     "invariant": "^2.2.1",
     "react-addons-pure-render-mixin": "^15.2.0",
-    "react-addons-shallow-compare": "^15.2.0",
-    "redux-form": "^6.1.0",
-    "underscore": "^1.8.3"
+    "react-addons-shallow-compare": "^15.2.0"
   },
   "devDependencies": {
-    "ajv": "^4.7.0",
+    "ajv": "^6.4.0",
     "babel-cli": "^6.11.4",
     "babel-core": "^6.11.4",
     "babel-eslint": "^6.1.2",
@@ -99,12 +97,9 @@
     "phantomjs-prebuilt": "^2.1.9",
     "purecss": "^0.6.0",
     "raw-loader": "^0.5.1",
-    "react": "^15.3.0",
     "react-addons-test-utils": "^15.3.0",
     "react-dom": "^15.3.0",
     "react-github-corner": "^0.3.0",
-    "react-redux": "^4.4.5",
-    "redux": "^3.5.2",
     "rimraf": "^2.5.4",
     "style-loader": "^0.13.1",
     "sync-exec": "^0.6.2",
@@ -112,16 +107,25 @@
     "url-loader": "^0.5.7",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1",
-    "webpack-merge": "^0.14.1"
+    "webpack-merge": "^0.14.1",
+    "lodash": "^4.17.5",
+    "ajv": "^6.4.0",
+    "immutable": "^3.8.2",
+    "react": "^16.2.0",
+    "redux": "^3.7.2",
+    "react-redux": "^5.0.7",
+    "redux-form": "^7.3.0"
   },
   "peerDependencies": {
-    "ajv": "^4.7.0",
-    "immutable": "^3.7.6",
-    "react": "^15.2.0",
-    "react-redux": "^4.4.5",
-    "redux": "^3.5.2"
+    "lodash": "^4.17.5",
+    "ajv": "^6.4.0",
+    "immutable": "^3.8.2",
+    "react": "^16.2.0",
+    "redux": "^3.7.2",
+    "react-redux": "^5.0.7",
+    "redux-form": "^7.3.0"
   },
-  "pre-push": [
+  "pre-push2": [
     "test",
     "test:lint"
   ]
