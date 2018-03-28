@@ -497,6 +497,7 @@ export default class Renderer {
 
     let options = schema.get('enum').map((value, idx) => {
       return createElement('option', {
+        key: value,
         value: value,
         children: [
           enumTitles && enumTitles.get(idx) ? enumTitles.get(idx) : value
