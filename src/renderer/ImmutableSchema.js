@@ -26,7 +26,7 @@ export default class Renderer {
 
     if (!schema.get('properties')) {
       if (schema.get('allOf') || schema.get('extends')) {
-        return <fieldset key={path} />;
+        return <fieldset key={path.concat('allOf').join('-') || 'root'} />;
       }
       if (schema.get('oneOf')) {
         return this.renderOneOf(schema, path, data);
@@ -54,7 +54,7 @@ export default class Renderer {
     }
 
     let container = {
-      key: path,
+      key: path.join('-') || 'root',
       disabled: schema.get('disabled'),
       children: []
     };
