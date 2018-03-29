@@ -1,7 +1,6 @@
 build/
 gh-pages/
 dist-modules/
-dist-module/
 node_modules/
 coverage/
 npm-debug.log

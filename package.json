@@ -8,7 +8,7 @@
   "engine": {
     "node": "^8"
   },
-  "main": "dist-module",
+  "main": "dist-modules",
   "module": "src",
   "jsnext:main": "src",
   "scripts": {
@@ -21,7 +21,7 @@
     "gh-pages:stats": "webpack --profile --json > stats.json",
     "dist": "webpack",
     "dist:min": "webpack",
-    "dist:modules": "rimraf ./dist-modules && babel ./src --out-dir ./dist-module --source-maps",
+    "dist:modules": "rimraf ./dist-modules && babel ./src --out-dir ./dist-modules --source-maps",
     "pretest": "npm run test:lint",
     "prepublish": "npm run dist:modules",
     "postpublish": "npm run gh-pages && npm run gh-pages:deploy",
