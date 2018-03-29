@@ -108,11 +108,12 @@ export default class SchemaForm extends Component {
       : (config && config.inputWrapperClass ? config.inputWrapperClass : '');
 
     return createElement('div', {
+      key: 'schemaform-buttons',
       className: (config.groupClass || '') + ' form-group-buttons',
-      children: [createElement('div', {
+      children: createElement('div', {
         className: wrapperClassName + (this.props.error ? ' has-danger' : ''),
         children: children
-      })]
+      })
     });
   }
 
@@ -144,7 +145,7 @@ export default class SchemaForm extends Component {
       props.type = type;
       deActivatePristine = true;
       if (config === true) {
-        props.children = ['Submit'];
+        props.children = 'Submit';
       }
     }
 
@@ -154,7 +155,7 @@ export default class SchemaForm extends Component {
       props.onClick = this.props.reset;
       deActivatePristine = true;
       if (config === true) {
-        props.children = ['Reset'];
+        props.children = 'Reset';
       }
     }
 
@@ -163,7 +164,7 @@ export default class SchemaForm extends Component {
     }
 
     if (text) {
-      props.children = [text];
+      props.children = text;
     }
 
     return createElement('button', {

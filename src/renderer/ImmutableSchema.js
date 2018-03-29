@@ -61,13 +61,16 @@ export default class Renderer {
 
     if (schema.get('title')) {
       container.children.push(createElement('legend', {
-        className: 'legend', children: [schema.get('title')]
+        key: `${path}-legend`,
+        className: 'legend',
+        children: schema.get('title')
       }));
     }
 
     if (schema.get('description')) {
       container.children.push(createElement('p', {
-        children: [schema.get('description')]
+        key: `${path}-description`,
+        children: schema.get('description')
       }));
     }
 
@@ -109,6 +112,7 @@ export default class Renderer {
     }
 
     let container = {
+      key: path,
       className: classNames.join(' '),
       children: []
     };
@@ -174,7 +178,7 @@ export default class Renderer {
       const value = subSchema.get('properties').get('value').get('default');
 
       if (me.getState() && me.getState()[id + 'selected'] === value ||
-          !me.getState() && schema.get('default') === value) {
+        !me.getState() && schema.get('default') === value) {
         subSchema = subSchema.set('properties', subSchema.get('properties').filter((item) => {
           return item.get('title') !== 'value';
         }));
@@ -276,7 +280,7 @@ export default class Renderer {
       default:
 
         if ((this.options.get('hasLabels') || this.options.get('hasLabels') === undefined) &&
-            !schema.get('renderer')) {
+          !schema.get('renderer')) {
           container.children.push(this.renderLabel(schema, subPath, id));
         }
 
@@ -304,6 +308,7 @@ export default class Renderer {
     }
 
     return createElement(FieldArray, {
+      key: this.getIdFromPath(path),
       name: this.getNameFromPath(path),
       schema: schema,
       component: this.renderArrayItems
@@ -312,47 +317,46 @@ export default class Renderer {
 
   renderArrayItems = ({ fields, meta, schema }) => {
     const path = this.getPathFromName(fields.name);
-    console.info('schema', schema.toJS());
-    console.info('path', path);
+    // console.info('schema', schema.toJS());
+    // console.info('path', path);
 
     const title = schema.get('title');
 
+    const id = this.getIdFromPath(path);
     return createElement('div', {
+      key: id,
       className: 'schema-property schema-datatype-array',
       children: [
         fields.map((field, idx) => {
           const itemItem = createElement('div', {
+            key: `${id}-${field}`,
             children: [
               schema.get('title') + ' #' + (idx + 1),
               createElement('button', {
+                key: `${id}-${field}-button-delete`,
                 type: 'button',
                 onClick: () => fields.remove(idx),
                 className: 'btn btn-default',
-                children: [
-                  this.getString('delete')
-                ]
+                children: this.getString('delete')
               })
             ]
           });
           return this.renderObject(schema.get('items').set('title', itemItem), this.getPathFromName(field));
         }),
         createElement('div', {
+          key: `${id}-buttons`,
           className: this.options.get('groupClass', '') + ' form-group-buttons',
-          children: [
-            createElement('div', {
-              className: this.options.get('buttonWrapperClass', ''),
+          children: createElement('div', {
+            className: this.options.get('buttonWrapperClass', ''),
+            children: createElement('button', {
+              type: 'button',
+              onClick: () => fields.push(),
+              className: 'btn btn-default',
               children: [
-                createElement('button', {
-                  type: 'button',
-                  onClick: () => fields.push(),
-                  className: 'btn btn-default',
-                  children: [
-                    this.getString('addNew').replace('%s', title)
-                  ]
-                })
+                this.getString('addNew').replace('%s', title)
               ]
             })
-          ]
+          })
         })
       ]
     });
@@ -367,10 +371,9 @@ export default class Renderer {
       className: this.options.get('labelClass'),
       htmlFor: id,
       key: id + '-label',
-      children: [
-        (schema.get('title') ? schema.get('title') : schema.get('description')) +
+      children: (schema.get('title') ? schema.get('title') : schema.get('description')) +
         (this.options.get('showRequired')
-          ? (schema.get('required') && schema.get('inputRenderer') !== 'display' ? ' *' : '') : '')]
+          ? (schema.get('required') && schema.get('inputRenderer') !== 'display' ? ' *' : '') : '')
     });
   };
 
@@ -398,7 +401,7 @@ export default class Renderer {
           type = 'email';
         }
         if (schema.get('inputRenderer') === 'textarea' ||
-            schema.get('options') && schema.get('options').get('renderHint') === 'textarea') {
+          schema.get('options') && schema.get('options').get('renderHint') === 'textarea') {
           type = 'textarea';
         }
         if (schema.get('inputRenderer') === 'password') {
@@ -453,7 +456,7 @@ export default class Renderer {
       pattern: schema.get('pattern'),
       // defaultValue: schema.get('default'),
       placeholder: (schema.get('description') || schema.get('title')) +
-        (this.options.get('showRequiredInPlaceholder') && schema.get('required') ? ' *' : ''),
+      (this.options.get('showRequiredInPlaceholder') && schema.get('required') ? ' *' : ''),
       autoComplete: schema.get('autocomplete')
     };
     if (type !== 'hidden') {
@@ -499,9 +502,7 @@ export default class Renderer {
       return createElement('option', {
         key: value,
         value: value,
-        children: [
-          enumTitles && enumTitles.get(idx) ? enumTitles.get(idx) : value
-        ]
+        children: enumTitles && enumTitles.get(idx) ? enumTitles.get(idx) : value
       });
     });
 
@@ -516,7 +517,7 @@ export default class Renderer {
       // multi: !!schema.get('multiple'),
       pattern: schema.get('pattern'),
       placeholder: schema.get('description') +
-        (this.options.get('showRequiredInPlaceholder') && schema.get('required') ? ' *' : ''),
+      (this.options.get('showRequiredInPlaceholder') && schema.get('required') ? ' *' : ''),
       autoComplete: schema.get('autocomplete'),
       onChange: schema.get('onChange'),
       type: 'select',
@@ -538,13 +539,13 @@ export default class Renderer {
       className: 'form-check radiogroup ' + this.options.get('inputWrapperClass'),
       children: schema.get('enum').map((itemValue, idx) => {
         return createElement('label', {
-          key: idx + itemValue,
+          key: `${id}-${itemValue}-label`,
           className: 'form-check-label',
           children: [
             this.createField({
+              key: `${id}-${itemValue}-input`,
               onChange: schema.get('onChange'),
               className: 'form-check-input',
-              key: name + itemValue,
               component: this.renderInputComponent,
               id: id + '-' + idx,
               type: 'radio',
@@ -594,15 +595,16 @@ export default class Renderer {
       this.renderFieldInputComponent(type, field),
       // <small class="form-text text-muted">Example help text that remains unchanged.</small>
       (field.meta.touched || field.meta.dirty) && field.meta.error ? createElement('div', {
-        className: 'form-control-feedback', children: [
-          this.options.get('locale') ? this.options.get('locale').getString(field.meta.error) : field.meta.error
-        ]
+        key: `${field.id}-error-feedback`,
+        className: 'form-control-feedback',
+        children: this.options.get('locale')
+          ? this.options.get('locale').getString(field.meta.error) : field.meta.error
       }) : null
     ];
 
     let cfg = {
-      className: this.options.get('inputWrapperClass'),
       key: field.id + '-wrapper',
+      className: this.options.get('inputWrapperClass'),
       children: field.type === 'checkbox' ? createElement('div', {
         className: 'checkbox',
         children: children
@@ -620,8 +622,8 @@ export default class Renderer {
     if (type === 'div') {
       return createElement(type, {
         className: this.options.get('inputStaticClass'),
-        children: [typeof field.input.value === 'boolean'
-          ? this.options.get('locale').getString(field.input.value) : field.input.value]
+        children: typeof field.input.value === 'boolean'
+          ? this.options.get('locale').getString(field.input.value) : field.input.value
       });
     }
 
@@ -630,6 +632,7 @@ export default class Renderer {
 
     const { meta, schema, input, ...rest } = field; // eslint-disable-line no-unused-vars
     let props = {
+      key: `${field.id}-FieldInputComponent`,
       ... rest,
       ... input,
       className
@@ -652,7 +655,7 @@ export default class Renderer {
 
       // custom inputRenderer
       if (schema && schema.get('inputRenderer') &&
-          this.options.get('inputRenderers').get(schema.get('inputRenderer'))) {
+        this.options.get('inputRenderers').get(schema.get('inputRenderer'))) {
         return this.options.get('inputRenderers').get(schema.get('inputRenderer'))(field, this.options);
       }
     }
