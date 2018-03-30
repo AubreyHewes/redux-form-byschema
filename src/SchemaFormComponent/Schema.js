@@ -51,6 +51,7 @@ export default class SchemaForm extends Component {
       /*eslint no-unused-vars:0*/
       // own
       schema, config, path, enableRecaptcha,
+      customFormats, customKeywords,
       // redux-form
       anyTouched, asyncValidate, asyncValidating, destroy, dirty, dispatch, error, focus, handleSubmit, initialize,
       invalid, pristine, reset, submitting, submitFailed, touch, untouch, valid, initialValues, shouldAsyncValidate,

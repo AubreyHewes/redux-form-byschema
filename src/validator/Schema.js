@@ -1,5 +1,5 @@
 import Ajv from 'ajv/lib/ajv';
-import { isObject } from 'underscore';
+import isObject from 'lodash/isObject';
 
 let validator = {};
 
