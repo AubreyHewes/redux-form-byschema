@@ -120,14 +120,6 @@ export default class Renderer {
     const me = this;
     const realPath = path;
 
-    // const field = createElement(Field, {
-    //   component: 'input',
-    //   type: 'text',
-    //   name: realPath.concat([propName]).join('.')
-    // });
-    // if (__DEBUG__) {
-    //   console.log(field);
-    // }
     const oneOfs = schema.get('oneOf').filter((subSchema) => {
       return subSchema.get('properties').get('value').get('default') !== null;
     });
@@ -149,20 +141,10 @@ export default class Renderer {
       'onChange': (newValue) => {
         // console.log('onChange', newValue);
         let state = {};
-        state[id + 'selected'] = newValue;
+        // state[id + 'selected'] = newValue;
+        state[id + 'selected'] = newValue.target.value;
         me.setState(state);
-
         me._test = state;
-        // let subSchema = schema.get('oneOf').filter((subSchema) => {
-        //   return state[id + 'selected'] === subSchema.get('title');
-        // });
-        // console.log(subSchema);
-        //
-        // if (subSchema.get('additionalProperties') === false) {
-        //   subSchema.get('properties').map((subSchema) => {
-        //     // me.removeField(me.getNameFromPath(realPath));
-        //   });
-        // }
 
         me.changeField(me.getNameFromPath(realPath.concat(['value'])), newValue);
       }
@@ -170,11 +152,6 @@ export default class Renderer {
 
     // render each enum as block
     container.children = container.children.concat(schema.get('oneOf').map(function (subSchema, idx) {
-      // if (me.getState()) {
-      //   console.log(me.getState()[id + 'selected']);
-      // }
-      // console.log('state', me._test && me._test[id + 'selected'] ? me._test[id + 'selected'] : null);
-
       const value = subSchema.get('properties').get('value').get('default');
 
       if (me.getState() && me.getState()[id + 'selected'] === value ||
@@ -184,10 +161,6 @@ export default class Renderer {
         }));
         return me.renderChunk(realPath.concat([]), subSchema/* .delete('title') */, data);
       }
-      // subSchema = subSchema.delete('title').set('disabled', false);
-      // if (subSchema.get('disabled')) {
-      //   return null;
-      // }
       return null;
     }));
 
