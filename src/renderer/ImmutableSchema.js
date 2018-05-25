@@ -239,10 +239,18 @@ export default class Renderer {
     //   // singular class name from assumed multiple
     //   className = path[path.length - 1].slice(0, -1);
     // }
+    const hasLabel = (this.options.get('hasLabels') || this.options.get('hasLabels') === undefined) &&
+      !schema.get('renderer');
+    const isBooleanCheckbox = schema.get('type') === 'boolean' &&
+      schema.get('enum') && schema.get('enum').size === 1;
 
-    let classNames = ['schema-property', 'schema-property-' + propName, 'schema-datatype-' + schema.get('type')];
+    const classNames = ['schema-property', 'schema-property-' + propName, 'schema-datatype-' + schema.get('type')];
+    if (isBooleanCheckbox) {
+      classNames.push('schema-inputtype-checkbox');
+    }
     if (this.options.get('groupClass') && schema.get('type') !== 'object' && schema.get('type') !== 'array') {
-      classNames.push(this.options.get('groupClass'));
+      classNames.push(isBooleanCheckbox && hasLabel
+        ? this.options.get('buttonWrapperClass') : this.options.get('groupClass'));
     }
 
     let subPath = path.slice(0);
@@ -278,13 +286,15 @@ export default class Renderer {
         break;
 
       default:
-
-        if ((this.options.get('hasLabels') || this.options.get('hasLabels') === undefined) &&
-          !schema.get('renderer')) {
+        if (hasLabel && !isBooleanCheckbox) {
           container.children.push(this.renderLabel(schema, subPath, id));
         }
 
         container.children.push(this.renderType(schema, subPath, value, id, name));
+
+        if (hasLabel && isBooleanCheckbox) {
+          container.children.push(this.renderLabel(schema, subPath, id));
+        }
         break;
     }
 
@@ -367,18 +377,26 @@ export default class Renderer {
   };
 
   renderLabel = (schema, path, id) => {
-    return createElement('label', {
-      className: this.options.get('labelClass'),
+    const isBooleanCheckbox = schema.get('type') === 'boolean' && schema.get('enum') && schema.get('enum').size === 1;
+    const labelText = (schema.get('title') ? schema.get('title') : schema.get('description')) +
+      (this.options.get('showRequired')
+        ? (schema.get('required') && schema.get('inputRenderer') !== 'display' ? ' *' : '') : '');
+    const cfg = {
+      className: isBooleanCheckbox ? '' : this.options.get('labelClass'),
       htmlFor: id,
       key: id + '-label',
-      children: (schema.get('title') ? schema.get('title') : schema.get('description')) +
-        (this.options.get('showRequired')
-          ? (schema.get('required') && schema.get('inputRenderer') !== 'display' ? ' *' : '') : '')
-    });
+      children: labelText
+    };
+    if (schema.get('labelAsHtml')) {
+      cfg.dangerouslySetInnerHTML = { __html: labelText };
+      cfg.children = null;
+    }
+    return createElement('label', cfg);
   };
 
   renderType = (schema, subPath, value, id, name) => {
-    if (schema.get('enum') && schema.get('inputRenderer') !== 'display') {
+    const isBooleanCheckbox = schema.get('type') === 'boolean' && schema.get('enum').size === 1;
+    if (schema.get('enum') && schema.get('inputRenderer') !== 'display' && !isBooleanCheckbox) {
       return this.renderEnum(schema, subPath, value, id, name);
     }
 
@@ -438,6 +456,7 @@ export default class Renderer {
     if (schema && schema.get('renderer') && this.options.get('renderers')) {
       // override renderer
       if (this.options.get('renderers').get(schema.get('renderer'))) {
+        // TODO (breaking change) component = this.options.get('renderers').get(schema.get('renderer'));
         return this.options.get('renderers').get(schema.get('renderer'))({schema, path, id, name, value, type}, this);
       }
     }
@@ -576,35 +595,39 @@ export default class Renderer {
     return this.renderFieldComponent('input', field);
   };
 
-  renderFieldComponent = (type, field) => {
-    //
-    // add a error ref to the field ( this is for allowing scroll to error stuff )
-    // if (field.meta.touched && field.meta.error) {
-    //   console.log(field);
-    //   field = React.cloneElement(field, { ref: 'error' });
-    //   console.log(field);
-    // }
-
-    // console.log(field);
-
-    if (field.type === 'radio') {
-      return this.renderFieldInputComponent(type, field);
-    }
-
-    let children = [
-      this.renderFieldInputComponent(type, field),
-      // <small class="form-text text-muted">Example help text that remains unchanged.</small>
+  renderFieldError = (field) => {
+    return (
       (field.meta.touched || field.meta.dirty) && field.meta.error ? createElement('div', {
         key: `${field.id}-error-feedback`,
         className: 'form-control-feedback',
         children: this.options.get('locale')
           ? this.options.get('locale').getString(field.meta.error) : field.meta.error
       }) : null
+    );
+  };
+
+  renderFieldComponent = (type, field) => {
+    // add a error ref to the field ( this is for allowing scroll to error stuff )
+    // if (field.meta.touched && field.meta.error) {
+    //   console.log(field);
+    //   field = React.cloneElement(field, { ref: 'error' });
+    //   console.log(field);
+    // }
+    if (field.type === 'radio') {
+      return this.renderFieldInputComponent(type, field);
+    }
+
+    const isBooleanCheckbox = field.schema.get('type') === 'boolean' && field.schema.get('enum').size === 1;
+
+    let children = [
+      this.renderFieldInputComponent(type, field),
+      // <small class="form-text text-muted">Example help text that remains unchanged.</small>
+      this.renderFieldError(field)
     ];
 
     let cfg = {
       key: field.id + '-wrapper',
-      className: this.options.get('inputWrapperClass'),
+      className: isBooleanCheckbox ? '' : this.options.get('inputWrapperClass'),
       children: field.type === 'checkbox' ? createElement('div', {
         className: 'checkbox',
         children: children
@@ -645,8 +668,6 @@ export default class Renderer {
       };
     }
 
-    // console.log(schema.toJS());
-
     if (this.options.get('inputRenderers')) {
       // override inputRenderer by type
       if (field.type && this.options.get('inputRenderers').get(field.type)) {
@@ -660,7 +681,6 @@ export default class Renderer {
       }
     }
 
-    // console.log('props', props);
     return createElement(type, props);
   }
 
