@@ -142,7 +142,11 @@ export default class Renderer {
         // console.log('onChange', newValue);
         let state = {};
         // state[id + 'selected'] = newValue;
-        state[id + 'selected'] = newValue.target.value;
+        if (!newValue.target) {
+          state[id + 'selected'] = newValue;
+        } else {
+          state[id + 'selected'] = newValue.target.value;
+        }
         me.setState(state);
         me._test = state;
 
