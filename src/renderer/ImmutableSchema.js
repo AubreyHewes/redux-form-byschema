@@ -218,8 +218,8 @@ export default class Renderer {
     // }
     const hasLabel = (this.options.get('hasLabels') || this.options.get('hasLabels') === undefined) &&
       !schema.get('renderer');
-    const isBooleanCheckbox = schema.get('type') === 'boolean' &&
-      schema.get('enum') && schema.get('enum').size === 1;
+
+    const isBooleanCheckbox = this.isBooleanEnum(schema);
 
     const classNames = ['schema-property', 'schema-property-' + propName, 'schema-datatype-' + schema.get('type')];
     if (isBooleanCheckbox) {
@@ -353,8 +353,13 @@ export default class Renderer {
     return this.options.get('locale') ? this.options.get('locale').getString(key) : key;
   };
 
+  isBooleanEnum = (schema) => {
+    const enumVal = schema.get('enum');
+    return schema.get('type') === 'boolean' && enumVal && enumVal.size === 1;
+  };
+
   renderLabel = (schema, path, id) => {
-    const isBooleanCheckbox = schema.get('type') === 'boolean' && schema.get('enum') && schema.get('enum').size === 1;
+    const isBooleanCheckbox = this.isBooleanEnum(schema);
     const labelText = (schema.get('title') ? schema.get('title') : schema.get('description')) +
       (this.options.get('showRequired')
         ? (schema.get('required') && schema.get('inputRenderer') !== 'display' ? ' *' : '') : '');
@@ -372,7 +377,7 @@ export default class Renderer {
   };
 
   renderType = (schema, subPath, value, id, name) => {
-    const isBooleanCheckbox = schema.get('type') === 'boolean' && schema.get('enum').size === 1;
+    const isBooleanCheckbox = this.isBooleanEnum(schema);
     if (schema.get('enum') && schema.get('inputRenderer') !== 'display' && !isBooleanCheckbox) {
       return this.renderEnum(schema, subPath, value, id, name);
     }
@@ -594,7 +599,7 @@ export default class Renderer {
       return this.renderFieldInputComponent(type, field);
     }
 
-    const isBooleanCheckbox = field.schema.get('type') === 'boolean' && field.schema.get('enum').size === 1;
+    const isBooleanCheckbox = this.isBooleanEnum(field.schema);
 
     let children = [
       this.renderFieldInputComponent(type, field),
