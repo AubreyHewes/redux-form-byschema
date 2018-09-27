@@ -552,7 +552,7 @@ export default class Renderer {
               type: 'radio',
               name: name,
               required: schema.get('required') ? 'required' : '',
-              disabled: schema.get('disabled').includes(itemValue),
+              disabled: schema.get('disabled', Immutable.List()).includes(itemValue),
               value: itemValue
             }),
             createElement('span', {
