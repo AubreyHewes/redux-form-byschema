@@ -555,7 +555,9 @@ export default class Renderer {
               disabled: schema.get('disabled').includes(itemValue),
               value: itemValue
             }),
-            enumTitles && enumTitles.get(idx) ? enumTitles.get(idx) : itemValue
+            createElement('span', {
+              children: enumTitles && enumTitles.get(idx) ? enumTitles.get(idx) : itemValue
+            })
           ]
         });
       })
