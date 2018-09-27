@@ -22,4 +22,3 @@ export const validate = Validator;
  *
  */
 export default SchemaForm;
-

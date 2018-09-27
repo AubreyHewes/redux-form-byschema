@@ -7,7 +7,6 @@ import { Field } from 'redux-form';
  * Basic HTML is generated; Style yourself!
  */
 export default class Renderer {
-
   constructor (options) {
     this.options = options || {
       path: []
@@ -64,7 +63,7 @@ export default class Renderer {
 
       path.slice(0);
       path.push(propName);
-      container.children.push(this.renderChunk(path, propSchema/*, data.get(propName)*/));
+      container.children.push(this.renderChunk(path, propSchema/*, data.get(propName) */));
     });
 
     return createElement('fieldset', container);
@@ -102,7 +101,7 @@ export default class Renderer {
       return this.renderInput('hidden', schema, subPath, value, id, name);
     }
 
-    let container = {className: classNames.join(' '), children: [], key: id};
+    let container = { className: classNames.join(' '), children: [], key: id };
 
     switch (schema.type) {
       case undefined: // complex type
@@ -114,7 +113,8 @@ export default class Renderer {
         if (this.options.hasLabels || this.options.hasLabels === undefined) {
           container.children.push(createElement('label', {
             className: this.options.labelClass,
-            htmlFor: id, key: subPath.concat('label'),
+            htmlFor: id,
+            key: subPath.concat('label'),
             children: [schema.title ? schema.title : schema.description]
           }));
         }
@@ -224,20 +224,21 @@ export default class Renderer {
     return createElement('div', {
       className: 'radiogroup ' + this.options.inputWrapperClass,
       children: schema.enum.map((itemValue, idx) => {
-        return createElement('label', {className: this.options.radioGroupInlineClass, children: [
-          createElement(Field, {
-            key: name + itemValue,
-            component: this.renderInputComponent,
-            autoComplete: schema.autocomplete,
-            id: id + '-' + idx,
-            type: 'radio',
-            name: name,
-            required: schema.required ? 'required' : '',
-            value: itemValue
-          }),
-          schema.enum_titles &&
+        return createElement('label', { className: this.options.radioGroupInlineClass,
+          children: [
+            createElement(Field, {
+              key: name + itemValue,
+              component: this.renderInputComponent,
+              autoComplete: schema.autocomplete,
+              id: id + '-' + idx,
+              type: 'radio',
+              name: name,
+              required: schema.required ? 'required' : '',
+              value: itemValue
+            }),
+            schema.enum_titles &&
           schema.enum_titles.get(idx) ? schema.enum_titles.get(idx) : itemValue
-        ]});
+          ] });
       })
     });
   };
@@ -265,7 +266,7 @@ export default class Renderer {
 
     let children = [
       this.renderFieldInputComponent(type, field),
-      field.touched && field.error ? createElement('span', {children: [field.error]}) : null
+      field.touched && field.error ? createElement('span', { children: [field.error] }) : null
     ];
 
     return createElement('div', {
@@ -287,8 +288,7 @@ export default class Renderer {
     }
     return createElement(type, {
       className: ['checkbox', 'radio'].indexOf(field.type) !== -1 ? '' : this.options.inputClass,
-      ... field
+      ...field
     });
   }
-
 }

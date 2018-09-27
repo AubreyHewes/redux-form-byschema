@@ -9,7 +9,6 @@ import Locale from '../i18n/en';
  * Basic HTML is generated; Style yourself!
  */
 export default class Renderer {
-
   constructor (options) {
     if (!Immutable.Map.isMap(options)) {
       throw new Error('Options should be an immutable map!');
@@ -86,7 +85,7 @@ export default class Renderer {
 
         path.slice(0);
         path.push(propName);
-        container.children.push(this.renderChunk(path, propSchema/*, data.get(propName)*/));
+        container.children.push(this.renderChunk(path, propSchema/*, data.get(propName) */));
       });
     }
 
@@ -158,8 +157,8 @@ export default class Renderer {
     container.children = container.children.concat(schema.get('oneOf').map(function (subSchema, idx) {
       const value = subSchema.get('properties').get('value').get('default');
 
-      if (me.getState() && me.getState()[id + 'selected'] === value ||
-        !me.getState() && schema.get('default') === value) {
+      if ((me.getState() && me.getState()[id + 'selected'] === value) ||
+        (!me.getState() && schema.get('default') === value)) {
         subSchema = subSchema.set('properties', subSchema.get('properties').filter((item) => {
           return item.get('title') !== 'value';
         }));
@@ -250,7 +249,7 @@ export default class Renderer {
       return this.renderInput('hidden', schema, subPath, value, id, name);
     }
 
-    let container = {className: classNames.join(' '), children: [], key: id};
+    let container = { className: classNames.join(' '), children: [], key: id };
 
     switch (schema.get('type')) {
       case undefined: // complex type
@@ -302,6 +301,7 @@ export default class Renderer {
     });
   };
 
+  // eslint-disable-next-line react/prop-types
   renderArrayItems = ({ fields, meta, schema }) => {
     const path = this.getPathFromName(fields.name);
     // console.info('schema', schema.toJS());
@@ -401,7 +401,7 @@ export default class Renderer {
           type = 'email';
         }
         if (schema.get('inputRenderer') === 'textarea' ||
-          schema.get('options') && schema.get('options').get('renderHint') === 'textarea') {
+          (schema.get('options') && schema.get('options').get('renderHint') === 'textarea')) {
           type = 'textarea';
         }
         if (schema.get('inputRenderer') === 'password') {
@@ -439,7 +439,7 @@ export default class Renderer {
       // override renderer
       if (this.options.get('renderers').get(schema.get('renderer'))) {
         // TODO (breaking change) component = this.options.get('renderers').get(schema.get('renderer'));
-        return this.options.get('renderers').get(schema.get('renderer'))({schema, path, id, name, value, type}, this);
+        return this.options.get('renderers').get(schema.get('renderer'))({ schema, path, id, name, value, type }, this);
       }
     }
 
@@ -492,7 +492,7 @@ export default class Renderer {
     if (schema.get('renderer') && this.options.get('renderers')) {
       // override renderer
       if (this.options.get('renderers').get(schema.get('renderer'))) {
-        return this.options.get('renderers').get(schema.get('renderer'))({schema, path, id, name, value}, this);
+        return this.options.get('renderers').get(schema.get('renderer'))({ schema, path, id, name, value }, this);
       }
     }
 
@@ -639,8 +639,8 @@ export default class Renderer {
     const { meta, schema, input, ...rest } = field; // eslint-disable-line no-unused-vars
     let props = {
       key: `${field.id}-FieldInputComponent`,
-      ... rest,
-      ... input,
+      ...rest,
+      ...input,
       className
     };
 
@@ -666,5 +666,4 @@ export default class Renderer {
 
     return createElement(type, props);
   }
-
 }

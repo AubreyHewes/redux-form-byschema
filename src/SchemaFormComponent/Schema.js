@@ -14,7 +14,7 @@ import Renderer from '../renderer/Schema';
  */
 export default class SchemaForm extends Component {
   static propTypes = {
-    ... propTypes,
+    ...propTypes,
     children: PropTypes.any,
     config: PropTypes.object,
     path: PropTypes.array,
@@ -48,7 +48,7 @@ export default class SchemaForm extends Component {
 
   render () {
     const {
-      /*eslint no-unused-vars:0*/
+      /* eslint no-unused-vars:0 */
       // own
       schema, config, path, enableRecaptcha,
       customFormats, customKeywords,
@@ -66,7 +66,7 @@ export default class SchemaForm extends Component {
     } = this.props;
 
     return createElement('form', {
-      ... rest,
+      ...rest,
       // onSubmitFail: () => console.log('failed', arguments),
       'data-role': 'form',
       'noValidate': true,
@@ -101,7 +101,7 @@ export default class SchemaForm extends Component {
     }
 
     if (this.props.error) {
-      children.push(createElement('div', {key: 'form-error', className: 'form-control-feedback'}, this.props.error));
+      children.push(createElement('div', { key: 'form-error', className: 'form-control-feedback' }, this.props.error));
     }
 
     const hasLabels = config.hasLabels || config.hasLabels === undefined;
@@ -169,8 +169,7 @@ export default class SchemaForm extends Component {
     }
 
     return createElement('button', {
-      ... props
+      ...props
     });
   }
-
 }

@@ -1,4 +1,4 @@
-import {isArray} from 'underscore';
+import { isArray } from 'underscore';
 
 export class LocaleBase {
   strings = {};

@@ -1,4 +1,4 @@
-/*eslint no-unused-vars:0*/
+/* eslint no-unused-vars:0 */
 import { Component, createElement, PropTypes } from 'react';
 import BasicSchemaForm from './Schema';
 import Renderer from '../renderer/ImmutableSchema';
@@ -12,7 +12,6 @@ import { fromJS as ImmutableFromJS } from 'immutable';
  *
  */
 export default class SchemaForm extends BasicSchemaForm {
-
   renderSchema (schema, values, config) {
     if (!this.renderer) {
       this.renderer = new Renderer(ImmutableFromJS(config));
@@ -43,5 +42,4 @@ export default class SchemaForm extends BasicSchemaForm {
     // console.log('props', this.props);
     return this.renderer.renderObject(schema, this.props.path || [], values);
   }
-
 }
