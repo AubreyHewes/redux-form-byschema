@@ -9,8 +9,3 @@ Generates a [redux-form](http://redux-form.com/) using a [JSON schema](http://js
 ## Caveats
 
  * Only simple forms.. for more advanced usage/examples see the documentation.
-
-## TODO/WIP
-
- * Custom property renderers
- * Custom input renderers
