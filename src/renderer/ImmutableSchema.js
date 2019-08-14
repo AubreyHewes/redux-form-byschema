@@ -606,8 +606,8 @@ export default class Renderer {
 
     let children = [
       this.renderFieldInputComponent(type, field),
-      // <small class="form-text text-muted">Example help text that remains unchanged.</small>
-      this.renderFieldError(field)
+      this.renderFieldError(field),
+      this.renderNote(field)
     ];
 
     let cfg = {
@@ -625,6 +625,18 @@ export default class Renderer {
 
     return createElement('div', cfg);
   };
+
+  renderNote(field) {
+    if (!field.schema.get("note")) {
+      return null;
+    }
+    return createElement('div', {
+      children: createElement('small', {
+        className: 'form-text text-muted',
+        children: field.schema.get("note")
+      })
+    });
+  }
 
   renderFieldInputComponent (type, field) {
     if (type === 'div') {
