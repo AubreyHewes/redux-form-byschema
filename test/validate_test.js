@@ -1,7 +1,7 @@
 import test from "ava";
 
 import Immutable from "immutable";
-import validate from "../src/validator/Schema";
+import validate from "../src/SchemaForm/validator";
 
 global.__DEBUG__ = false; // eslint-disable-line no-unused-vars
 
