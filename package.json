@@ -1,6 +1,6 @@
 {
   "name": "@hewes/redux-form-byschema",
-  "version": "0.0.0-alpha21",
+  "version": "0.0.0-alpha22",
   "description": "Generate a redux-form from a JSON schema",
   "author": "Aubrey Hewes <https://github.com/AubreyHewes>",
   "license": "MIT",
