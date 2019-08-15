@@ -669,7 +669,9 @@ export default class Renderer {
     return createElement("div", {
       children: createElement("small", {
         className: "form-text text-muted",
-        children: field.schema.get("note")
+        dangerouslySetInnerHTML: {
+          __html: field.schema.get("note")
+        }
       })
     });
   };
