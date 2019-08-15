@@ -8,16 +8,14 @@ import { Field, FieldArray } from "redux-form";
  * Basic HTML is generated; Style yourself!
  */
 export default class Renderer {
-  t = text => text;
-
   constructor(options) {
-    this.t = options.t || this.t;
     if (!ImmutableMap.isMap(options)) {
       throw new Error("Options should be an immutable map!");
     }
+    this.t = options.get("t", text => text);
     this.options = new ImmutableMap({
       path: []
-    }).mergeDeep({ ...options, t: undefined });
+    }).mergeDeep(options);
   }
 
   getRef = (/*ref*/) => Promise.reject(new Error("Not implemented"));
