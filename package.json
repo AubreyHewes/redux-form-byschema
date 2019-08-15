@@ -27,7 +27,7 @@
     "lint": "eslint .",
     "lint:fix": "yarn run lint --fix",
     "build": "rimraf ./dist && babel ./src --out-dir ./dist",
-    "prepublish": "yarn run build"
+    "prepublish": "yarn run test && yarn run build"
   },
   "engine": {
     "node": ">=8",
