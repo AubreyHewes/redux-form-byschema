@@ -366,7 +366,7 @@ export default class Renderer {
                 type: "button",
                 onClick: () => fields.remove(idx),
                 className: "btn btn-default",
-                children: this.getString("delete")
+                children: this.t("delete")
               })
             ]
           });
@@ -381,7 +381,7 @@ export default class Renderer {
               type: "button",
               onClick: () => fields.push(),
               className: "btn btn-default",
-              children: [this.getString("addNew").replace("%s", title)]
+              children: [this.t("addNew").replace("%s", title)]
             })
           })
         })
