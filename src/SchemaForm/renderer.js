@@ -349,6 +349,11 @@ export default class Renderer {
 
     const title = schema.get("title");
 
+    let schemaItemDefaultData = schema.get("default", ImmutableList()).get(0, null);
+    if (schemaItemDefaultData) {
+      schemaItemDefaultData = schemaItemDefaultData.toJS();
+    }
+
     const id = this.getIdFromPath(path);
     return createElement("div", {
       key: id,
@@ -377,7 +382,7 @@ export default class Renderer {
             className: this.options.get("buttonWrapperClass", ""),
             children: createElement("button", {
               type: "button",
-              onClick: () => fields.push(),
+              onClick: () => fields.push(schemaItemDefaultData),
               className: "btn btn-default",
               children: [this.t("addNew").replace("%s", title)]
             })
