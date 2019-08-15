@@ -1,4 +1,9 @@
 demo/
-dist/
+docs/
+lib/
+src/
 tests/
 .*
+*.yml
+karma.conf.js
+webpack.config.babel.js

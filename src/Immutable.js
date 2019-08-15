@@ -1,6 +1,6 @@
-import Renderer from './renderer/ImmutableSchema';
-import Validator from './validator/Schema'; // redux-form does not support an immutable for validation
-import SchemaForm from './SchemaFormComponent/ImmutableSchema';
+import Renderer from "./renderer/ImmutableSchema";
+import Validator from "./validator/Schema"; // redux-form does not support an immutable for validation
+import SchemaForm from "./SchemaFormComponent/ImmutableSchema";
 
 /**
  * Wrapper for easy access
@@ -9,9 +9,7 @@ import SchemaForm from './SchemaFormComponent/ImmutableSchema';
  * @param values
  * @param options
  */
-export const render = (schema, values, options) => {
-  return new Renderer(options).renderObject(schema, [], values);
-};
+export const render = (schema, values, options) => new Renderer(options).renderObject(schema, [], values);
 
 /**
  *

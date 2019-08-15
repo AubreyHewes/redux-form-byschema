@@ -1,5 +1,5 @@
-import Immutable from 'immutable';
-import SchemaForm, { render as renderSchema, validate as validateSchema } from './Immutable';
+import { fromJS as ImmutableFromJS } from "immutable";
+import SchemaForm, { render as renderSchema, validate as validateSchema } from "./Immutable";
 
 /**
  * Wrapper for easy access
@@ -8,13 +8,7 @@ import SchemaForm, { render as renderSchema, validate as validateSchema } from '
  * @param values
  * @param options
  */
-export const render = (schema, values, options) => {
-  return renderSchema(
-    Immutable.fromJS(schema || {}),
-    values,
-    options
-  );
-};
+export const render = (schema, values, options) => renderSchema(ImmutableFromJS(schema || {}), values, options);
 
 /**
  *

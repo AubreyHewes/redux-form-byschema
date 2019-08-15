@@ -1,33 +1,12 @@
 {
-  "name": "redux-form-byschema",
-  "version": "0.0.0-alpha19",
+  "name": "@hewes/redux-form-byschema",
+  "version": "0.0.0-alpha20",
   "description": "Generate a redux-form from a JSON schema",
   "author": "Aubrey Hewes <https://github.com/AubreyHewes>",
-  "user": "AubreyHewes",
   "license": "MIT",
-  "engine": {
-    "node": "^8"
-  },
-  "main": "dist-modules",
-  "module": "src",
-  "jsnext:main": "src",
-  "scripts": {
-    "start": "webpack-dev-server",
-    "test": "karma start --",
-    "test:tdd": "karma start --auto-watch --no-single-run --",
-    "test:lint": "eslint . --ext .js --ext .jsx --ignore-path .gitignore --ignore-pattern dist --cache",
-    "lint": "eslint src/ --fix --cache",
-    "lint:fix": "eslint src/ --fix --cache",
-    "gh-pages": "webpack",
-    "gh-pages:deploy": "gh-pages -d gh-pages",
-    "gh-pages:stats": "webpack --profile --json > stats.json",
-    "dist": "webpack",
-    "dist:min": "webpack",
-    "dist:modules": "rimraf ./dist-modules && babel ./src --out-dir ./dist-modules --source-maps",
-    "pretest": "npm run test:lint",
-    "prepublish": "npm run dist:modules",
-    "postpublish": "npm run gh-pages && npm run gh-pages:deploy",
-    "postinstall": "node lib/post_install.js"
+  "homepage": "https://github.com/AubreyHewes/redux-form-byschema#README.md",
+  "bugs": {
+    "url": "https://github.com/AubreyHewes/redux-form-byschema/issues"
   },
   "repository": {
     "type": "git",
@@ -37,101 +16,197 @@
     "redux-form",
     "json",
     "schema",
+    "jsonschema",
     "react",
+    "form",
     "redux"
   ],
-  "bugs": {
-    "url": "https://github.com/AubreyHewes/redux-form-byschema/issues"
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "ava",
+    "lint": "eslint .",
+    "lint:fix": "yarn run lint --fix",
+    "build": "rimraf ./dist && babel ./src --out-dir ./dist",
+    "prepublish": "yarn run build"
   },
-  "homepage": "https://AubreyHewes.github.io/redux-form-byschema/",
-  "dependencies": {
-    "invariant": "^2.2.1",
-    "react-addons-pure-render-mixin": "^15.2.0",
-    "react-addons-shallow-compare": "^15.2.0"
-  },
-  "devDependencies": {
-    "ajv": "^6.4.0",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^8.2.2",
-    "babel-loader": "^7.1.4",
-    "babel-plugin-react-transform": "^3.0.0",
-    "babel-plugin-transform-react-constant-elements": "^6.23.0",
-    "babel-plugin-transform-react-remove-prop-types": "^0.4.18",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-react-hmre": "^1.1.1",
-    "babel-preset-stage-0": "^6.24.1",
-    "babel-register": "^6.26.0",
-    "babel-runtime": "^6.26.0",
-    "catalog": "^2.4.7",
-    "chai": "^3.5.0",
-    "clean-webpack-plugin": "^0.1.10",
-    "css-loader": "^0.23.1",
-    "eslint": "^5.6.0",
-    "eslint-config-airbnb": "^17.1.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-config-standard-react": "^7.0.2",
-    "eslint-loader": "^2.1.1",
-    "eslint-plugin-babel": "^5.2.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jsx-a11y": "^6.1.1",
-    "eslint-plugin-node": "^7.0.1",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-react": "^7.11.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "extract-text-webpack-plugin": "^1.0.1",
-    "file-loader": "^0.9.0",
-    "gh-pages": "^0.11.0",
-    "git-prepush-hook": "^1.0.1",
-    "html-webpack-plugin": "^2.22.0",
-    "html-webpack-template": "^5.0.0",
-    "immutable": "^3.8.2",
-    "isparta-loader": "^2.0.0",
-    "json-loader": "^0.5.4",
-    "karma": "^1.1.2",
-    "karma-chai": "^0.1.0",
-    "karma-coverage": "^1.1.1",
-    "karma-mocha": "^1.1.1",
-    "karma-phantomjs-launcher": "^1.0.1",
-    "karma-sourcemap-loader": "^0.3.7",
-    "karma-spec-reporter": "0.0.26",
-    "karma-webpack": "^1.7.0",
-    "lodash": "^4.17.11",
-    "mocha": "^3.0.0",
-    "phantomjs-polyfill": "0.0.2",
-    "phantomjs-prebuilt": "^2.1.9",
-    "purecss": "^0.6.0",
-    "raw-loader": "^0.5.1",
-    "react": "^16.2.0",
-    "react-addons-test-utils": "^15.3.0",
-    "react-dom": "^15.3.0",
-    "react-github-corner": "^0.3.0",
-    "react-redux": "^5.0.7",
-    "redux": "^3.7.2",
-    "redux-form": "^7.3.0",
-    "rimraf": "^2.6.2",
-    "style-loader": "^0.13.1",
-    "sync-exec": "^0.6.2",
-    "system-bell-webpack-plugin": "^1.0.0",
-    "url-loader": "^0.5.7",
-    "webpack": "^1.13.1",
-    "webpack-dev-server": "^1.14.1",
-    "webpack-merge": "^0.14.1"
+  "engine": {
+    "node": ">=8",
+    "npm": ">=6",
+    "yarn": ">=1"
   },
   "peerDependencies": {
     "ajv": "^6.4.0",
     "immutable": "^3.8.2",
     "lodash": "^4.17.5",
+    "prop-types": "^15.5.7",
     "react": "^16.2.0",
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",
     "redux-form": "^7.3.0"
   },
-  "pre-push2": [
-    "test",
-    "test:lint"
+  "dependencies": {
+    "invariant": "^2.2.1"
+  },
+  "devDependencies": {
+    "@ava/babel-preset-stage-4": "^4.0.0",
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-decorators": "^7.4.4",
+    "@babel/plugin-proposal-do-expressions": "^7.5.0",
+    "@babel/plugin-proposal-export-default-from": "^7.5.2",
+    "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
+    "@babel/plugin-proposal-function-bind": "^7.2.0",
+    "@babel/plugin-proposal-function-sent": "^7.5.0",
+    "@babel/plugin-proposal-json-strings": "^7.2.0",
+    "@babel/plugin-proposal-logical-assignment-operators": "^7.2.0",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.4.4",
+    "@babel/plugin-proposal-numeric-separator": "^7.2.0",
+    "@babel/plugin-proposal-optional-chaining": "^7.2.0",
+    "@babel/plugin-proposal-pipeline-operator": "^7.5.0",
+    "@babel/plugin-proposal-throw-expressions": "^7.2.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/plugin-syntax-import-meta": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.5.5",
+    "@babel/runtime": "^7.5.5",
+    "@hewes/eslint-config": "^1.1.3",
+    "ajv": "^6.4.0",
+    "ava": "^2.2.0",
+    "babel-eslint": "^10.0.2",
+    "babel-plugin-istanbul": "^5.2.0",
+    "eslint": "^6.1.0",
+    "eslint-plugin-ava": "^7.1.0",
+    "husky": "^3.0.3",
+    "immutable": "^3.8.2",
+    "lodash": "^4.17.11",
+    "nyc": "^14.1.1",
+    "prettier": "^1.18.2",
+    "prop-types": "^15.7.2",
+    "react": "^16.2.0",
+    "react-dom": "^15.3.0",
+    "react-redux": "^5.0.7",
+    "redux": "^3.7.2",
+    "redux-form": "^7.3.0",
+    "rimraf": "^3.0.0"
+  },
+  "eslintConfig": {
+    "extends": "@hewes/eslint-config",
+    "globals": {
+      "__DEV__": false,
+      "__DEBUG__": false
+    },
+    "env": {
+      "browser": true
+    },
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    }
+  },
+  "eslintIgnore": [
+    "coverage/**",
+    "node_modules/**",
+    "dist/**",
+    "*.spec.js"
   ],
-  "pre-push": []
+  "prettier": {
+    "printWidth": 120
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-function-bind",
+      "@babel/plugin-proposal-export-default-from",
+      "@babel/plugin-proposal-logical-assignment-operators",
+      [
+        "@babel/plugin-proposal-optional-chaining",
+        {
+          "loose": false
+        }
+      ],
+      [
+        "@babel/plugin-proposal-pipeline-operator",
+        {
+          "proposal": "minimal"
+        }
+      ],
+      [
+        "@babel/plugin-proposal-nullish-coalescing-operator",
+        {
+          "loose": false
+        }
+      ],
+      "@babel/plugin-proposal-do-expressions",
+      [
+        "@babel/plugin-proposal-decorators",
+        {
+          "legacy": true
+        }
+      ],
+      "@babel/plugin-proposal-function-sent",
+      "@babel/plugin-proposal-export-namespace-from",
+      "@babel/plugin-proposal-numeric-separator",
+      "@babel/plugin-proposal-throw-expressions",
+      "@babel/plugin-syntax-dynamic-import",
+      "@babel/plugin-syntax-import-meta",
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ],
+      "@babel/plugin-proposal-json-strings"
+    ],
+    "env": {
+      "test": {
+        "plugins": [
+          "istanbul"
+        ]
+      }
+    }
+  },
+  "ava": {
+    "require": [
+      "@babel/register"
+    ],
+    "babel": {
+      "testOptions": {
+        "plugins": [],
+        "presets": [
+          "@ava/stage-4"
+        ]
+      }
+    }
+  },
+  "nyc": {
+    "require": [
+      "@babel/register"
+    ],
+    "reporter": [
+      "lcov",
+      "text"
+    ],
+    "sourceMap": false,
+    "instrument": false
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn run lint",
+      "pre-push": "yarn run test"
+    }
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "directories": {
+    "lib": "dist",
+    "test": "test"
+  }
 }
