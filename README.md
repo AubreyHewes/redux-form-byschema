@@ -1,6 +1,7 @@
 > NOTE: This project is now _ARCHIVED_ (sic; not literally archived as is still in use and still requires changes for current users), this project has been superseded by other projects and/or ideas.
 > _ALL_ non collaborator Issue/PR will be ignored/closed without feedback.
 
+![Travis CI](https://img.shields.io/travis/aubreyhewes/redux-form-byschema?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/AubreyHewes/redux-form-byschema.svg?style=flat-square)
 ![GitHub tag (latest by date)](https://img.shields.io/github/tag-date/AubreyHewes/redux-form-byschema.svg?style=flat-square)
 ![npm](https://img.shields.io/npm/v/@hewes/redux-form-byschema.svg?style=flat-square)
