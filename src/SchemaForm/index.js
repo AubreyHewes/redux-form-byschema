@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import { propTypes as formPropTypes } from "redux-form";
 import isBoolean from "lodash/isBoolean";
 import isString from "lodash/isString";
-// import isObject from "lodash/isObject";
 
-import Renderer from "../renderer/Schema";
+import Renderer from "./renderer";
+import { fromJS as ImmutableFromJS } from "immutable";
 
 /**
  * A SchemaForm React Component; returns a form using the configured props.schema
@@ -13,7 +13,7 @@ import Renderer from "../renderer/Schema";
  * Other options are:
  * setting a config (object)prop containing the following:
  */
-export default class SchemaForm extends Component {
+export default class Index extends Component {
   static propTypes = {
     ...formPropTypes,
     children: PropTypes.any,
@@ -26,8 +26,12 @@ export default class SchemaForm extends Component {
 
   renderSchema(schema, values, config) {
     if (!this.renderer) {
-      this.renderer = new Renderer(config);
+      this.renderer = new Renderer(ImmutableFromJS(config));
       const me = this;
+
+      this.renderer.formProps = this.props;
+      // console.log('props', this.props);
+
       this.renderer.setState = state => {
         me.setState(state);
       };
@@ -40,6 +44,10 @@ export default class SchemaForm extends Component {
         // console.log('changeField', name, value);
         me.props.dispatch(me.props.change(name, value));
     }
+    if (schema.get("type") === "array") {
+      return this.renderer.renderArray(schema, this.props.path || [], values);
+    }
+    // console.log('props', this.props);
     return this.renderer.renderObject(schema, this.props.path || [], values);
   }
 

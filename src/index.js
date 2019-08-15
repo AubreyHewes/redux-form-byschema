@@ -1,5 +1,8 @@
 import { fromJS as ImmutableFromJS } from "immutable";
-import SchemaForm, { render as renderSchema, validate as validateSchema } from "./Immutable";
+import SchemaForm from "./SchemaForm";
+import renderer from "./SchemaForm/renderer";
+
+export validate from "./SchemaForm/validator";
 
 /**
  * Wrapper for easy access
@@ -8,12 +11,7 @@ import SchemaForm, { render as renderSchema, validate as validateSchema } from "
  * @param values
  * @param options
  */
-export const render = (schema, values, options) => renderSchema(ImmutableFromJS(schema || {}), values, options);
-
-/**
- *
- */
-export const validate = validateSchema;
+export const render = (schema, values, options) => renderer(ImmutableFromJS(schema || {}), values, options);
 
 /**
  * Renderer for a react-redux (v6) form via a JSON Schema
