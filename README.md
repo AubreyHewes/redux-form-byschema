@@ -6,6 +6,7 @@
 ![GitHub tag (latest by date)](https://img.shields.io/github/tag-date/AubreyHewes/redux-form-byschema.svg?style=flat-square)
 ![npm](https://img.shields.io/npm/v/@hewes/redux-form-byschema.svg?style=flat-square)
 ![npm](https://img.shields.io/npm/dm/@hewes/redux-form-byschema.svg?style=flat-square)
+![Conventional Commits](https://img.shields.io/badge/conventional%20commits-1.0.0-brightgreen.svg?style=flat-square)
 [![Beerpay](https://beerpay.io/AubreyHewes/redux-form-byschema/badge.svg?style=flat-square)](https://beerpay.io/AubreyHewes/redux-form-byschema)
 
 # A JSON Schema redux-form generator (WIP)
