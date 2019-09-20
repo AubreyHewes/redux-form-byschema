@@ -61,7 +61,9 @@ export default class Index extends Component {
       enableRecaptcha,
       customFormats,
       customKeywords,
+      inputRenderers,
       // redux-form
+      onSubmitFail,
       anyTouched,
       asyncValidate,
       asyncValidating,
