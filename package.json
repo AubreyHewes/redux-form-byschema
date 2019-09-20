@@ -70,6 +70,8 @@
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.5.5",
     "@babel/runtime": "^7.5.5",
+    "@commitlint/cli": "^8.2.0",
+    "@commitlint/config-conventional": "^8.2.0",
     "@hewes/eslint-config": "^1.1.3",
     "@types/lodash": "^4.14.136",
     "@types/node": "12.6.8",
@@ -200,10 +202,16 @@
     "sourceMap": false,
     "instrument": false
   },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
   "husky": {
     "hooks": {
       "pre-commit": "yarn run lint",
-      "pre-push": "yarn run test"
+      "pre-push": "yarn run test",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
   "files": [
