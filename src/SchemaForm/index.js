@@ -112,7 +112,7 @@ export default class Index extends Component {
       autofill,
       clearSubmitErrors,
       warning,
-      // rest
+      // rest will be added to form element
       ...rest
     } = this.props;
 
