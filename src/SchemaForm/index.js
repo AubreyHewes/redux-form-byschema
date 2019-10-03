@@ -13,7 +13,7 @@ import { fromJS as ImmutableFromJS } from "immutable";
  * Other options are:
  * setting a config (object)prop containing the following:
  */
-export default class Index extends Component {
+export default class SchemaForm extends Component {
   static propTypes = {
     ...formPropTypes,
     children: PropTypes.any,
@@ -30,24 +30,19 @@ export default class Index extends Component {
       const me = this;
 
       this.renderer.formProps = this.props;
-      // console.log('props', this.props);
 
       this.renderer.setState = state => {
         me.setState(state);
       };
       this.renderer.getState = () => me.state;
       this.renderer.removeField = name =>
-        // console.log('removeField', me.props.form, name);
         me.props.dispatch(me.props.change(name, {}));
-      // return me.props.dispatch(unregisterField(me.props.form, name));
       this.renderer.changeField = (name, value) =>
-        // console.log('changeField', name, value);
         me.props.dispatch(me.props.change(name, value));
     }
     if (schema.get("type") === "array") {
       return this.renderer.renderArray(schema, this.props.path || [], values);
     }
-    // console.log('props', this.props);
     return this.renderer.renderObject(schema, this.props.path || [], values);
   }
 
@@ -62,7 +57,7 @@ export default class Index extends Component {
       customFormats,
       customKeywords,
       inputRenderers,
-      // redux-form
+      // redux-form TODO find out how to ignore these all instead of piecemeal
       onSubmitFail,
       anyTouched,
       asyncValidate,
@@ -182,9 +177,6 @@ export default class Index extends Component {
       text = props;
       props = {};
     }
-
-    // if (isObject(props)) {
-    // }
 
     // add default type; else the form will submit!
     if (!props.type) {

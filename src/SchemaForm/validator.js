@@ -45,7 +45,6 @@ export const validate = (values, form, customKeywords, customFormats) => {
   }
   const valid = validator[form.schema.hashCode()](values);
 
-  // console.log('errors', validator[form.schema.hashCode()].errors);
   if (valid) {
     return errors;
   }
