@@ -21,7 +21,6 @@ export default class Renderer {
   getRef = (/*ref*/) => Promise.reject(new Error("Not implemented"));
 
   renderObject = (schema, path, data) => {
-    // const chunkPromises = [];
     data = data || {};
 
     if (!schema.get("properties")) {
@@ -40,10 +39,6 @@ export default class Renderer {
           }
         });
       }
-
-      // if (schema.get("type") && schema.get("type") === "array" && schema.get("items")) {
-      //   chunkPromises.push(this.renderChunk(path, schema, data));
-      // }
     }
 
     if (schema && schema.get("renderer") && this.options.get("renderers")) {
@@ -134,7 +129,6 @@ export default class Renderer {
           .get("default") !== null
     );
 
-    // console.log(schema.toJS());
     container.children.push(
       this.renderChunk(
         realPath.concat([propName]),
@@ -158,9 +152,7 @@ export default class Renderer {
               .get("title")
           ),
           onChange: newValue => {
-            // console.log('onChange', newValue);
             const state = {};
-            // state[id + 'selected'] = newValue;
             if (!newValue.target) {
               state[`${id}selected`] = newValue;
             } else {
@@ -208,9 +200,6 @@ export default class Renderer {
    * @returns {string}
    */
   getNameFromPath = path => `root.${path.join(".")}`;
-  // return 'root' + (path.length ? path.map((nibble) => {
-  //   return '[' + nibble + ']';
-  // }).join('') : '');
 
   /**
    *
@@ -235,11 +224,6 @@ export default class Renderer {
    */
   renderChunk = (path, schema, value = undefined) => {
     const propName = path.pop();
-    // let className = propName;
-    // if (!isNaN(parseInt(propName, 10))) {
-    //   // singular class name from assumed multiple
-    //   className = path[path.length - 1].slice(0, -1);
-    // }
     const hasLabel =
       (this.options.get("hasLabels") || this.options.get("hasLabels") === undefined) && !schema.get("renderer");
 
@@ -256,7 +240,6 @@ export default class Renderer {
     }
 
     const subPath = path.slice(0);
-    // console.log(subPath);
     if (propName) {
       subPath.push(propName);
     }
@@ -344,8 +327,6 @@ export default class Renderer {
   // eslint-disable-next-line react/prop-types
   renderArrayItems = ({ fields, /*meta,*/ schema }) => {
     const path = this.getPathFromName(fields.name);
-    // console.info('schema', schema.toJS());
-    // console.info('path', path);
 
     const title = schema.get("title");
 
@@ -574,9 +555,7 @@ export default class Renderer {
     return this.createField(cfg);
   };
 
-  createField = cfg =>
-    // cfg.withRef = cfg.name;
-    createElement(Field, cfg);
+  createField = cfg => createElement(Field, cfg);
 
   renderBooleanEnum = (schema, path, value, id, name) => {
     const enumTitles =
@@ -628,12 +607,6 @@ export default class Renderer {
       : null;
 
   renderFieldComponent = (type, field) => {
-    // add a error ref to the field ( this is for allowing scroll to error stuff )
-    // if (field.meta.touched && field.meta.error) {
-    //   console.log(field);
-    //   field = React.cloneElement(field, { ref: 'error' });
-    //   console.log(field);
-    // }
     if (field.type === "radio") {
       return this.renderFieldInputComponent(type, field);
     }
