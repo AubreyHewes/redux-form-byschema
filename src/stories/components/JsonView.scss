@@ -1,0 +1,26 @@
+
+.json {
+  font: 13px/18px monospace;
+}
+
+.json_object {
+  //display: inline-block;
+  //vertical-align: top;
+}
+.json_number, .json_boolean {
+  color: #1A01CC;
+  font-weight: bold;
+  display: inline-block;
+}
+.json_string {
+  color: #0B7500;
+  word-wrap: break-word;
+  display: inline-block;
+}
+
+.json_value {
+  display: block;
+  padding-left: 20px;
+  margin-left: -20px;
+  position: relative;
+}

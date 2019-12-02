@@ -70,7 +70,7 @@ const BootstrapSchemaForm = props => {
       <div>
         <strong>Schema</strong>
         <br />
-        <JsonView json={props.schema.toJS()} />
+        <JsonView value={props.schema.toJS()} />
       </div>
     </div>
   );

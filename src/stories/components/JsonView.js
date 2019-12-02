@@ -1,34 +1,61 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-const renderObject = (obj, depth) => (
-  <div className="json_object">
-    <div>&#123;</div>
+import "./JsonView.scss";
+
+const renderProperty = (name, expandable, expanded) => {};
+
+const renderObject = (name, obj, depth, options) => (
+  <span className="json_value json_object">
+    <span>&#123;</span>
     {Object.keys(obj).map(key => (
-      <div key={`${key}${depth}`} style={{ marginLeft: 10 }}>
-        &#34;{key}&#34;: <JsonView depth={depth + 1} json={obj[key]} />
-      </div>
+      <JSONValue key={`${key}${depth}`} name={key} depth={depth + 1} value={obj[key]} />
     ))}
-    <div>&#125;</div>
-  </div>
+    <span>&#125;</span>
+  </span>
 );
 
-const renderArray = arr => <div>Array</div>;
+const renderArray = (name, value, depth, options) => (
+  <span className="json_value json_array">
+    [
+    <span>
+      {value.map(v => (
+        <JSONValue value={v} />
+      ))}
+    </span>
+    ]
+  </span>
+);
 
-const JsonView = ({ json, depth = 1 }) => {
-  if (typeof json === "object") {
-    return renderObject(json, depth);
+const renderBasic = (name, value, depth, options) => {
+  if (typeof value === "number") {
+    return <span className="json_value json_number">{value}</span>;
   }
-  if (Array.isArray(json)) {
-    return renderArray(json, depth);
+  if (typeof value === "string") {
+    return <span className="json_value json_string">"{value}"</span>;
   }
-  if (typeof json === "number") {
-    return <div className="json_number">{json}</div>;
+  if (typeof value === "boolean") {
+    return <span className="json_value json_boolean">{value ? "true" : "false"}</span>;
   }
-  if (typeof json === "string") {
-    return <div className="json_string">"{json}"</div>;
+  return null;
+};
+
+const JSONValue = ({ name, value, depth, options }) => {
+  // &#34;{key}&#34;:&nbsp;
+  const [expanded, setExpanded] = useState(true);
+  if (Array.isArray(value)) {
+    return renderArray(name, value, depth, { expandable: true, expanded, setExpanded });
   }
-  return "YO";
+  if (typeof value === "object") {
+    return renderObject(name, value, depth, { expandable: true, expanded, setExpanded });
+  }
+  return renderBasic(name, value, depth);
   // return <pre>{JSON.stringify(json, null, 2)}</pre>;
 };
+
+const JsonView = ({ value, options }) => (
+  <span className="json">
+    <JSONValue value={value} options={options} />
+  </span>
+);
 
 export default JsonView;
