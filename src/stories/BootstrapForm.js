@@ -6,6 +6,7 @@ import { reduxForm, reducer as formReducer } from "redux-form";
 import SchemaForm from "../index";
 
 import "./bootstrap.scss";
+import JsonView from "./components/JsonView";
 
 const store = createStore(
   combineReducers({
@@ -69,7 +70,7 @@ const BootstrapSchemaForm = props => {
       <div>
         <strong>Schema</strong>
         <br />
-        <pre>{JSON.stringify(props.schema.toJS(), null, 2)}</pre>
+        <JsonView json={props.schema.toJS()} />
       </div>
     </div>
   );
