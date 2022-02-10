@@ -91,7 +91,7 @@
     "husky": "^4.0.7",
     "immutable": "^3.8.2",
     "lodash": "^4.17.15",
-    "node-sass": "^4.13.0",
+    "node-sass": "^7.0.0",
     "nyc": "^15.0.0",
     "prettier": "^1.19.1",
     "prop-types": "^15.7.2",
